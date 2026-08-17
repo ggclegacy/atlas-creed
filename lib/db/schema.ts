@@ -1,4 +1,3 @@
-import type { AdapterAccountType } from "next-auth/adapters";
 import {
   index,
   integer,
@@ -20,7 +19,7 @@ const timestamps = {
     .notNull(),
 };
 
-/** Auth.js user storage and Atlas's single-owner root entity. */
+/** Atlas's single-owner root entity. */
 export const owners = pgTable(
   "owners",
   {
@@ -37,14 +36,14 @@ export const owners = pgTable(
   (table) => [uniqueIndex("owners_email_unique").on(table.email)],
 );
 
-/** Auth.js adapter table. No OAuth provider is enabled in V1. */
+/** Reserved adapter table from the applied Phase 1 baseline migration. */
 export const accounts = pgTable(
   "auth_accounts",
   {
     userId: uuid("user_id")
       .notNull()
       .references(() => owners.id, { onDelete: "cascade" }),
-    type: text("type").$type<AdapterAccountType>().notNull(),
+    type: text("type").notNull(),
     provider: text("provider").notNull(),
     providerAccountId: text("provider_account_id").notNull(),
     refresh_token: text("refresh_token"),

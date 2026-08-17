@@ -1,13 +1,12 @@
 import { expect, test } from "@playwright/test";
 
-test("an unauthenticated visitor is sent to the private sign-in entry", async ({
+test("the Phase 1 shell is available without authentication", async ({
   page,
 }) => {
   await page.goto("/");
 
-  await expect.poll(() => new URL(page.url()).pathname).toBe("/sign-in");
   await expect(
-    page.getByRole("heading", { level: 1, name: "Enter the environment." }),
+    page.getByRole("heading", { level: 1, name: "Atlas is here." }),
   ).toBeVisible();
 
   const background = await page.evaluate(
@@ -17,15 +16,13 @@ test("an unauthenticated visitor is sent to the private sign-in entry", async ({
   expect(background).not.toBe("rgba(0, 0, 0, 0)");
 });
 
-test("auth messaging does not disclose the configured owner", async ({
-  page,
-}) => {
-  await page.goto("/sign-in/check-email");
+test("settings reports direct-access mode", async ({ page }) => {
+  await page.goto("/settings");
   await expect(
-    page.getByRole("heading", { name: "Check your email." }),
+    page.getByRole("heading", { level: 1, name: "Settings" }),
   ).toBeVisible();
-  await expect(page.getByText(/if the address is authorized/i)).toBeVisible();
-  await expect(page.getByText("owner@example.com")).toHaveCount(0);
+  await expect(page.getByText("Direct access")).toBeVisible();
+  await expect(page.getByText("Not configured")).toBeVisible();
 });
 
 test("PWA and security assets are served with production headers", async ({
@@ -39,19 +36,19 @@ test("PWA and security assets are served with production headers", async ({
   const icon = await request.get("/icon-maskable-512.png");
   expect(icon.ok()).toBe(true);
 
-  const signIn = await request.get("/sign-in");
-  expect(signIn.headers()["x-frame-options"]).toBe("DENY");
-  expect(signIn.headers()["content-security-policy"]).toContain(
+  const shell = await request.get("/");
+  expect(shell.headers()["x-frame-options"]).toBe("DENY");
+  expect(shell.headers()["content-security-policy"]).toContain(
     "frame-ancestors 'none'",
   );
 });
 
-test("the sign-in surface fits a realistic phone viewport", async ({
+test("the direct-access shell fits a realistic phone viewport", async ({
   page,
   isMobile,
 }) => {
   test.skip(!isMobile, "mobile ergonomics assertion");
-  await page.goto("/sign-in");
+  await page.goto("/");
 
   const dimensions = await page.evaluate(() => ({
     innerWidth: window.innerWidth,
@@ -59,8 +56,8 @@ test("the sign-in surface fits a realistic phone viewport", async ({
   }));
   expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.innerWidth);
 
-  const submit = await page
-    .getByRole("button", { name: "Send secure link" })
+  const menu = await page
+    .getByRole("button", { name: "Open navigation" })
     .boundingBox();
-  expect(submit?.height).toBeGreaterThanOrEqual(44);
+  expect(menu?.height).toBeGreaterThanOrEqual(44);
 });

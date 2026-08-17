@@ -96,18 +96,6 @@ button {
   touch-action: manipulation;
 }
 
-.auth-ground {
-  background:
-    linear-gradient(
-        90deg,
-        transparent 0,
-        var(--border-hairline) 50%,
-        transparent 100%
-      )
-      50% 100% / min(42rem, 86vw) 1px no-repeat,
-    var(--surface-void);
-}
-
 /* Focus is hierarchy. It is always visible and never removed. */
 :where(a, button, input, select, textarea, [tabindex]):focus-visible {
   outline: var(--state-focus-width) solid var(--state-focus-ring);

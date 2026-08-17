@@ -1,11 +1,10 @@
 "use client";
 
-import { Home, LogOut, Menu, Settings, X } from "lucide-react";
+import { Home, Menu, Settings, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-import { signOutOwner } from "@/app/(atlas)/actions";
 import { AtlasMark } from "@/components/brand/atlas-mark";
 
 const destinations = [
@@ -52,23 +51,6 @@ function RailContents({ close }: { close?: () => void }) {
           );
         })}
       </nav>
-      <form
-        action={signOutOwner}
-        className="border-t border-border-hairline p-2"
-      >
-        <button
-          type="submit"
-          aria-label="Sign out"
-          title="Sign out"
-          className="flex size-11 items-center justify-center rounded-inline text-text-tertiary transition-colors duration-[var(--motion-hover)] hover:bg-[var(--state-hover)] hover:text-text-primary"
-        >
-          <LogOut
-            aria-hidden="true"
-            className="size-[1.125rem]"
-            strokeWidth={1.6}
-          />
-        </button>
-      </form>
     </>
   );
 }

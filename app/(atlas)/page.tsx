@@ -16,13 +16,13 @@ export default function AtlasHomePage() {
           Atlas is here.
         </h1>
         <p className="mt-6 max-w-[52ch] text-[length:var(--text-size-lead)] leading-[var(--text-leading-body)] text-text-secondary">
-          The private environment is established. Conversation, memory, and
-          intelligence are intentionally quiet until the next phase.
+          The environment is established. Conversation, memory, and intelligence
+          are intentionally quiet until the next phase.
         </p>
 
         <div className="mt-16 border-t border-border-hairline pt-5 sm:mt-24">
           <p className="max-w-[var(--measure-ui)] text-[length:var(--text-size-compact)] text-text-tertiary">
-            A secure place to think is now ready. Intelligence comes next.
+            A place to think is now ready. Intelligence comes next.
           </p>
         </div>
       </section>

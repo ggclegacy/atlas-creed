@@ -16,8 +16,8 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
 
-  // Secure defaults. Authentication and data access stay server-side; this
-  // browser policy permits only Atlas-owned resources at rest.
+  // Secure browser defaults. The current shell contains no private data; this
+  // policy permits only Atlas-owned resources at rest.
   poweredByHeader: false,
 
   headers: () =>

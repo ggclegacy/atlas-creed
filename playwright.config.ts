@@ -1,8 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
 /**
- * Phase 1 exercises the public auth entry, protected-route boundary, PWA
- * assets, and realistic desktop/mobile layouts against a production server.
+ * Phase 1 exercises the direct-access shell, PWA assets, security headers, and
+ * realistic desktop/mobile layouts against a production server.
  */
 export default defineConfig({
   testDir: "./tests/e2e",

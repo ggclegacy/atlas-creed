@@ -66,6 +66,10 @@ cp .env.example .env.local   # fill in values as later phases require them
 corepack pnpm dev
 ```
 
+The current Phase 1 shell uses direct access and contains no conversations,
+memory, or private owner data. Authentication must be added before any private
+capability is enabled on a public deployment.
+
 ---
 
 ## Commands

@@ -1,6 +1,10 @@
 # Atlas Creed Phase 1 deployment
 
-**Scope:** secure Phase 1 application shell only. This procedure does not authorize Phase 2.
+**Scope:** empty Phase 1 application shell only. This procedure does not authorize Phase 2.
+
+The owner explicitly deferred authentication for this shell. It contains no conversations,
+memory, or private owner data. Do not enable any such capability until an access-control boundary
+is restored.
 
 ## Vercel project
 
@@ -24,18 +28,13 @@ overridden.
 
 Phase 1 has **no required build-time environment variables** and no client-exposed environment
 variables. The values below are server-only and validated on the first request that initializes
-Auth.js/Neon. Missing or invalid requirements fail together with a named validation error. They
-must still be configured before the first deployment is considered usable.
+Neon. Missing or invalid requirements fail together with a named validation error. The static
+Phase 1 shell does not initialize Neon and can be deployed before they are configured.
 
 | Name | Timing | Sensitivity | Production | Preview | Development |
 |---|---|---:|---:|---:|---:|
 | `DATABASE_URL` | Required runtime | Secret | Required: production branch | Required: preview branch | Required to run the app |
 | `DATABASE_ENVIRONMENT` | Required runtime | Non-secret | `production` | `preview` | `development` |
-| `AUTH_SECRET` | Required runtime | Secret | Required, unique | Required, separate from production | Required, separate from hosted values |
-| `AUTH_RESEND_KEY` | Required runtime | Secret | Required | Required; use a separately scoped key | Required to run the app |
-| `AUTH_EMAIL_FROM` | Required runtime | Non-secret | Required | Required | Required to run the app |
-| `OWNER_EMAIL` | Required runtime | Sensitive configuration | Required | Required | Required to run the app |
-| `AUTH_URL` | Optional runtime | Non-secret | Omit on Vercel | Omit on Vercel | Optional for non-Vercel hosts |
 
 `NODE_ENV` and `VERCEL_ENV` are server-only, platform-owned inputs. Next.js supplies `NODE_ENV`;
 Vercel supplies `VERCEL_ENV`. Neither belongs in Vercel project settings. There are no
@@ -43,9 +42,7 @@ development-only, preview-only, or production-only user-managed variable names; 
 is represented by each value and by `DATABASE_ENVIRONMENT`.
 
 Preview and production values must be added to their separate Vercel scopes. Never copy the
-production `DATABASE_URL` or `AUTH_SECRET` into Preview. Do not deploy a nonfunctional preview
-with fabricated email credentials; configure a real, restricted preview key or leave that scope
-undeployed until it exists.
+production `DATABASE_URL` into Preview.
 
 ## Neon
 
@@ -60,21 +57,9 @@ undeployed until it exists.
    confirmed database. Migrations are never part of the application build command.
 
 The first migration creates the four approved domain tables (`owners`, `conversations`,
-`messages`, `system_events`) and the three Auth.js adapter tables needed for database sessions and
-email verification. It creates no Phase 2 schema.
-
-## Resend and Auth.js
-
-1. Verify a sender domain in Resend.
-2. Create a narrowly scoped API key and store it as `AUTH_RESEND_KEY`.
-3. Set `AUTH_EMAIL_FROM` to a mailbox on that verified domain.
-4. Generate `AUTH_SECRET` with at least 32 random bytes (for example, `openssl rand -base64 32`)
-   and store it directly in Vercel. Do not paste it into chat.
-5. Set `OWNER_EMAIL` to the exact mailbox authorized to use Atlas.
-
-Auth.js derives each Vercel deployment origin, so `AUTH_URL` is intentionally omitted in hosted
-environments. Magic links expire after 15 minutes and are single-use. Sessions are stored in
-Postgres; Auth.js applies `HttpOnly`, `Secure`, and `SameSite=Lax` cookie defaults on HTTPS.
+`messages`, `system_events`) and three unused Auth.js adapter tables from the original baseline.
+Those tables remain to avoid a destructive production schema change. It creates no Phase 2
+schema.
 
 ## Deployment sequence
 
@@ -87,7 +72,7 @@ Postgres; Auth.js applies `HttpOnly`, `Secure`, and `SameSite=Lax` cookie defaul
    to `ggclegacy/atlas-creed` with `main` as the production branch.
 5. Configure the environment scopes above and apply migrations only to confirmed targets.
 6. Deploy to the generated `vercel.app` domain first.
-7. Verify `/sign-in`, `/manifest.webmanifest`, icons, `/sw.js`, security headers, unauthenticated
-   redirects, owner magic-link sign-in, and the private desktop/mobile shell.
+7. Verify `/`, `/settings`, `/manifest.webmanifest`, icons, `/sw.js`, security headers, and the
+   direct-access desktop/mobile shell.
 8. Configure a custom domain only after the generated deployment is healthy and the owner has
    selected and authorized that domain.

@@ -27,7 +27,7 @@ The engineering rule from §47 is the gate for every addition: *does this improv
 
 [docs/ATLAS_V1_BUILD_PLAN.md](docs/ATLAS_V1_BUILD_PLAN.md) is the authoritative technical plan — **Revision 3, approved**. `docs/architecture/ARCHITECTURE.md` is a superseded earlier sketch; don't build from it.
 
-Stack: Next.js 16.x + TypeScript strict + Postgres (Drizzle/Neon) + Auth.js magic link on Vercel, **Node runtime throughout — no Edge**, with Claude Opus 5 behind a thin model interface.
+Stack: Next.js 16.x + TypeScript strict + Postgres (Drizzle/Neon) on Vercel, **Node runtime throughout — no Edge**, with Claude Opus 5 behind a thin model interface. The approved V1 plan includes authentication, but the owner explicitly deferred it while the Phase 1 shell contains no private data.
 
 Three architecture rules that are easy to violate accidentally:
 
@@ -43,7 +43,7 @@ Three architecture rules that are easy to violate accidentally:
 
 Implemented: Next.js app skeleton, strict TypeScript, ESLint + Prettier, Vitest + Playwright, CI, environment validation, architecture boundary enforcement, and the design-token architecture.
 
-Phase 1 may implement only its approved database, authentication, protected application shell, PWA, and deployment foundation. AI calls, chat, canon, memory, retrieval, projects, files, voice, agents, and tools remain unauthorized.
+Phase 1 may implement only its approved database, direct-access application shell, PWA, and deployment foundation. AI calls, chat, canon, memory, retrieval, projects, files, voice, agents, and tools remain unauthorized. Authentication is deliberately absent for the empty shell and must be restored before any private owner data or mutation ships.
 
 ## Engineering conventions (Phase 0)
 

@@ -8,13 +8,9 @@ import { z } from "zod";
  * guard or reading the real process environment.
  *
  * Build Plan §14. Variables are added only when their approved phase arrives.
- * Phase 1 now requires the database and authentication values below.
+ * Direct-access Phase 1 requires only the database values below. Authentication
+ * must be reintroduced before the shell stores or exposes private owner data.
  */
-
-const emailFromSchema = z.string().refine((value) => {
-  const bracketedAddress = value.match(/<([^<>]+)>$/)?.[1];
-  return z.email().safeParse(bracketedAddress ?? value).success;
-}, "Must be an email address or a display name followed by <email@example.com>");
 
 /** Server-only configuration. Never sent to the browser. */
 export const serverEnvSchema = z.object({
@@ -30,11 +26,6 @@ export const serverEnvSchema = z.object({
       "Must be a PostgreSQL connection URL",
     ),
   DATABASE_ENVIRONMENT: z.enum(["development", "preview", "production"]),
-  AUTH_SECRET: z.string().min(32, "Must contain at least 32 characters"),
-  AUTH_RESEND_KEY: z.string().startsWith("re_"),
-  AUTH_EMAIL_FROM: emailFromSchema,
-  OWNER_EMAIL: z.email(),
-  AUTH_URL: z.url().optional(),
   VERCEL_ENV: z.enum(["development", "preview", "production"]).optional(),
 
   // Phase 2 adds: ANTHROPIC_API_KEY
