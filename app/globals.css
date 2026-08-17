@@ -88,12 +88,65 @@ body {
 }
 
 button,
-input {
+input,
+textarea {
   font: inherit;
 }
 
 button {
   touch-action: manipulation;
+}
+
+.auth-ground {
+  background:
+    linear-gradient(
+        90deg,
+        transparent 0,
+        var(--border-hairline) 50%,
+        transparent 100%
+      )
+      50% 100% / min(42rem, 86vw) 1px no-repeat,
+    var(--surface-void);
+}
+
+.atlas-prose :where(h1, h2, h3) {
+  margin-block: 1.75em 0.65em;
+  font-family: var(--font-display);
+  font-weight: 520;
+  line-height: 1.2;
+  letter-spacing: var(--text-tracking-heading);
+}
+
+.atlas-prose h1 {
+  font-size: 1.65rem;
+}
+.atlas-prose h2 {
+  font-size: 1.35rem;
+}
+.atlas-prose h3 {
+  font-size: 1.1rem;
+}
+
+.atlas-prose :where(p, ul, ol) {
+  margin-block: 0 1em;
+}
+.atlas-prose :where(ul, ol) {
+  padding-left: 1.5rem;
+}
+.atlas-prose ul {
+  list-style: disc;
+}
+.atlas-prose ol {
+  list-style: decimal;
+}
+.atlas-prose li + li {
+  margin-top: 0.35rem;
+}
+.atlas-prose > :first-child {
+  margin-top: 0;
+}
+.atlas-prose > :last-child {
+  margin-bottom: 0;
 }
 
 /* Focus is hierarchy. It is always visible and never removed. */

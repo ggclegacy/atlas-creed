@@ -53,8 +53,23 @@ jobs:
     name: end-to-end smoke
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    # Non-sensitive, non-routable fixtures let unauthenticated route tests run.
-    # CI never attempts a database query or sends email.
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: atlas
+          POSTGRES_PASSWORD: atlas
+          POSTGRES_DB: atlas_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U atlas -d atlas_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    # Non-sensitive fixtures target local Postgres and the local Responses stub.
+    # CI never sends email or performs a paid OpenAI call.
     env:
       DATABASE_URL: postgresql://atlas:atlas@127.0.0.1:5432/atlas_ci
       DATABASE_ENVIRONMENT: development
@@ -63,6 +78,12 @@ jobs:
       AUTH_EMAIL_FROM: Atlas CI <atlas@example.com>
       OWNER_EMAIL: owner@example.com
       AUTH_URL: http://127.0.0.1:3000
+      OPENAI_API_KEY: sk-ci-only-not-a-real-openai-key
+      OPENAI_BASE_URL: http://127.0.0.1:4010/v1
+      ATLAS_CONVERSATION_MODEL: gpt-5.6-sol
+      ATLAS_BACKGROUND_MODEL: gpt-5.6-terra
+      ATLAS_DAILY_SOFT_LIMIT_USD: 10
+      ATLAS_MONTHLY_HARD_LIMIT_USD: 150
 
     steps:
       - uses: actions/checkout@v4
@@ -81,6 +102,25 @@ jobs:
 
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium
+
+      - name: Apply migrations
+        run: pnpm db:migrate
+
+      - name: Database integration tests
+        run: pnpm test:integration
+
+      - name: Seed authenticated owner session
+        env:
+          PGPASSWORD: atlas
+        run: |
+          psql -h 127.0.0.1 -U atlas -d atlas_ci -v ON_ERROR_STOP=1 <<'SQL'
+          INSERT INTO owners (id, email, email_verified)
+          VALUES ('00000000-0000-4000-8000-000000000001', 'owner@example.com', now())
+          ON CONFLICT (email) DO UPDATE SET email_verified = EXCLUDED.email_verified;
+          INSERT INTO auth_sessions (session_token, owner_id, expires)
+          VALUES ('atlas-ci-owner-session', '00000000-0000-4000-8000-000000000001', now() + interval '1 hour')
+          ON CONFLICT (session_token) DO UPDATE SET expires = EXCLUDED.expires;
+          SQL
 
       - name: Run smoke test
         run: pnpm test:e2e
