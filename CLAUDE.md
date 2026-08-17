@@ -41,7 +41,18 @@ Not implemented: database, auth, AI calls, chat, canon, memory, retrieval, proje
 
 ## Engineering conventions (Phase 0)
 
-**Verification.** `pnpm verify` runs the full local gate: typecheck → lint → format check → tests → build. CI runs the same steps plus a Playwright smoke test. A red gate blocks the merge.
+**Running commands — use `corepack pnpm`.** pnpm is **not** on the default shell PATH in this environment. Node's bundled Corepack reads the `packageManager` field and runs the exact pinned version with no PATH change:
+
+```bash
+corepack pnpm install
+corepack pnpm verify
+```
+
+A bare `pnpm ...` will fail with *command not found* unless a shim has been added to PATH manually — see [README.md](README.md). The one exception is `test:e2e`: Playwright's `webServer` spawns a plain shell that runs `pnpm build && pnpm start`, so E2E needs `PATH="$HOME/.local/bin:$PATH"` prefixed, or a shim on PATH.
+
+**Node is pinned to 24** in [`.nvmrc`](.nvmrc); `engines` and CI both read that pin. Verified on v24.19.0. Don't change the runtime casually.
+
+**Verification.** `corepack pnpm verify` runs the full local gate: typecheck → lint → format check → tests → build. CI runs the same steps plus a Playwright smoke test. A red gate blocks the merge.
 
 **Architecture boundaries** are defined once in [`architecture.json`](architecture.json), applied by [`eslint.config.mjs`](eslint.config.mjs), and proved by [`tests/arch/`](tests/arch/). One definition means tests cannot drift from the real config and quietly start proving nothing. Two boundaries exist today:
 
