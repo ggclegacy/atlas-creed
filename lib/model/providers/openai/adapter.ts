@@ -180,11 +180,13 @@ export class OpenAIAtlasModel implements AtlasModel {
     apiKey: string,
     readonly modelId: string,
     client?: OpenAI,
+    baseURL?: string,
   ) {
     this.client =
       client ??
       new OpenAI({
         apiKey,
+        ...(baseURL ? { baseURL } : {}),
         maxRetries: 0,
         timeout: 240_000,
       });

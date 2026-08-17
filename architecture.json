@@ -47,6 +47,8 @@
 
   "envBoundaryAllowlist": [
     "lib/env/**",
+    "scripts/check-deployment-env.mjs",
+    "scripts/check-database-readiness.mjs",
     "*.config.ts",
     "*.config.mjs",
     "tests/**"

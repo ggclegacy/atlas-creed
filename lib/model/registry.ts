@@ -10,5 +10,10 @@ export function modelFor(role: ModelRole): AtlasModel {
     role === "conversation"
       ? env.ATLAS_CONVERSATION_MODEL
       : env.ATLAS_BACKGROUND_MODEL;
-  return new OpenAIAtlasModel(env.OPENAI_API_KEY, modelId);
+  return new OpenAIAtlasModel(
+    env.OPENAI_API_KEY,
+    modelId,
+    undefined,
+    env.OPENAI_BASE_URL,
+  );
 }

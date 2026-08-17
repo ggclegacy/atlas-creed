@@ -55,6 +55,17 @@ const fixturesSchema = z.object({
 
 const fixtures = fixturesSchema.parse(fixturesJson);
 
+export const CONSTITUTIONAL_FOUNDATION_EXPECTATIONS = Object.freeze({
+  activeCanonIds: CANON_REGISTRY.documents.map((document) => document.id),
+  projectKnowledgeCounts: Object.fromEntries(
+    fixtures.projects.map((project) => [
+      project.slug,
+      fixtures.records.filter((record) => record.projectSlug === project.slug)
+        .length,
+    ]),
+  ),
+});
+
 export interface BootstrapResult {
   readonly documentsCreated: number;
   readonly sectionsCreated: number;

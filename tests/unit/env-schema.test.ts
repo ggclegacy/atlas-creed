@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { parseServerEnv } from "../../lib/env/schema";
+import {
+  assertProductionDeploymentEnv,
+  parseDatabaseRuntimeEnv,
+  parseServerEnv,
+} from "../../lib/env/schema";
 
 /**
  * Configuration must fail loudly at startup, never as `undefined` deep inside a
@@ -77,5 +81,63 @@ describe("server environment schema", () => {
         SOMETHING_ELSE: "x",
       }),
     ).not.toThrow();
+  });
+
+  it("parses the narrow database-only contract for migration tooling", () => {
+    expect(
+      parseDatabaseRuntimeEnv({
+        DATABASE_URL: validServerEnv.DATABASE_URL,
+        DATABASE_ENVIRONMENT: "development",
+      }),
+    ).toMatchObject({ DATABASE_ENVIRONMENT: "development" });
+  });
+});
+
+describe("production deployment environment", () => {
+  const productionEnv = parseServerEnv({
+    ...validServerEnv,
+    NODE_ENV: "production",
+    DATABASE_URL:
+      "postgresql://atlas:fixture@ep-atlas-pooler.us-east-2.aws.neon.tech/atlas?sslmode=require&channel_binding=require",
+    DATABASE_ENVIRONMENT: "production",
+    VERCEL_ENV: "production",
+    AUTH_SECRET: "fixture-production-secret-material-123456789",
+    AUTH_RESEND_KEY: "re_productionfixture123456789",
+    AUTH_EMAIL_FROM: "Atlas <auth@atlas.invalid>",
+    OWNER_EMAIL: "owner@atlas.invalid",
+    OPENAI_API_KEY: "sk-productionfixture123456789",
+  });
+
+  it("accepts a pooled TLS Neon target and non-placeholder secrets", () => {
+    expect(() => assertProductionDeploymentEnv(productionEnv)).not.toThrow();
+  });
+
+  it("rejects a direct Neon connection", () => {
+    expect(() =>
+      assertProductionDeploymentEnv({
+        ...productionEnv,
+        DATABASE_URL:
+          "postgresql://atlas:fixture@ep-atlas.us-east-2.aws.neon.tech/atlas?sslmode=require",
+      }),
+    ).toThrowError(/pooled/i);
+  });
+
+  it("rejects placeholder credentials and non-official model endpoints", () => {
+    expect(() =>
+      assertProductionDeploymentEnv({
+        ...productionEnv,
+        OPENAI_API_KEY: "sk-not-a-real-production-key",
+        OPENAI_BASE_URL: "https://models.invalid/v1",
+      }),
+    ).toThrowError(/OPENAI_API_KEY|OPENAI_BASE_URL/);
+  });
+
+  it("rejects an insecure explicit Auth.js origin", () => {
+    expect(() =>
+      assertProductionDeploymentEnv({
+        ...productionEnv,
+        AUTH_URL: "http://atlas.invalid",
+      }),
+    ).toThrowError(/AUTH_URL/);
   });
 });

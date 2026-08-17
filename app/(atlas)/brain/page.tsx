@@ -10,7 +10,9 @@ import {
   amendmentApprovalPhrase,
 } from "@/lib/constitutional/amendments";
 import { ATLAS_CAPABILITIES } from "@/lib/constitutional/capabilities";
+import { CONSTITUTIONAL_FOUNDATION_EXPECTATIONS } from "@/lib/constitutional/bootstrap";
 import { CONSTITUTION_INITIALIZATION_PHRASE } from "@/lib/constitutional/confirmations";
+import { isConstitutionalFoundationReady } from "@/lib/constitutional/foundation-readiness";
 import {
   CONSTITUTIONAL_KERNEL,
   CONSTITUTIONAL_KERNEL_TOKEN_BUDGET,
@@ -25,6 +27,10 @@ export default async function BrainPage({
 }) {
   const owner = await requireOwner();
   const snapshot = await getBrainSnapshot(owner.id);
+  const foundationReady = isConstitutionalFoundationReady(
+    snapshot,
+    CONSTITUTIONAL_FOUNDATION_EXPECTATIONS,
+  );
   const initialized = (await searchParams).initialized === "1";
 
   return (
@@ -107,15 +113,16 @@ export default async function BrainPage({
               </article>
             ))}
           </div>
-        ) : (
+        ) : null}
+        {!foundationReady ? (
           <form
             action={initializeConstitutionAction}
             className="mt-5 border border-border-emphasis p-5"
           >
             <p className="text-[length:var(--text-size-compact)] text-text-secondary">
-              The schema is ready, but the protected canon has not been loaded
-              for this database. Type the exact phrase to import the fixed,
-              checksummed F1 registry and minimal company fixtures.
+              The protected foundation is incomplete for this database or owner.
+              Type the exact phrase to reconcile the fixed, checksummed F1
+              registry and owner-scoped company fixtures.
             </p>
             <label
               className="mt-4 block text-[.75rem] text-text-tertiary"
@@ -137,7 +144,7 @@ export default async function BrainPage({
               Initialize constitutional foundation
             </button>
           </form>
-        )}
+        ) : null}
       </section>
 
       <section className="border-t border-border-hairline py-7">

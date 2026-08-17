@@ -42,6 +42,16 @@ test("unauthorized visitors see magic-link access and cannot call the model rout
     data: { clientTurnId: crypto.randomUUID(), text: "unauthorized" },
   });
   expect(response.status()).toBe(401);
+
+  for (const privatePath of [
+    "/brain",
+    "/settings",
+    `/c/${crypto.randomUUID()}`,
+  ]) {
+    const direct = await request.get(privatePath, { maxRedirects: 0 });
+    expect([302, 303, 307, 308]).toContain(direct.status());
+    expect(direct.headers().location).toContain("/sign-in");
+  }
 });
 
 test("owner streams, reloads, continues context, and receives a generated title", async ({
@@ -111,12 +121,29 @@ test("authenticated settings, PWA, and security headers are present", async ({
   request,
 }) => {
   await authenticateOwner(context);
-  await page.goto("/settings");
+  const settingsResponse = await page.goto("/settings");
   await expect(
     page.getByRole("heading", { level: 1, name: "Settings" }),
   ).toBeVisible();
+  expect(settingsResponse?.headers()["cache-control"] ?? "").toMatch(
+    /private|no-store/,
+  );
   await expect(page.getByText("Email magic link")).toBeVisible();
   await expect(page.getByText("gpt-5.6-sol")).toBeVisible();
+
+  const session = await context.request.get("/api/auth/session");
+  expect(session.ok()).toBe(true);
+  expect(await session.json()).toMatchObject({
+    user: { email: "owner@example.com" },
+  });
+  const rejectedOrigin = await context.request.post(
+    "/api/conversations/turns",
+    {
+      headers: { Origin: "https://attacker.invalid" },
+      data: { clientTurnId: crypto.randomUUID(), text: "reject this origin" },
+    },
+  );
+  expect(rejectedOrigin.status()).toBe(403);
 
   const manifest = await request.get("/manifest.webmanifest");
   expect(manifest.ok()).toBe(true);

@@ -24,6 +24,8 @@
     "db:generate": "drizzle-kit generate",
     "db:check": "drizzle-kit check",
     "db:migrate": "drizzle-kit migrate",
+    "db:verify": "node --experimental-strip-types scripts/check-database-readiness.mjs",
+    "env:check:production": "node --experimental-strip-types scripts/check-deployment-env.mjs",
     "canon:import": "node scripts/import-canon.mjs --out data/canon/registry.json",
     "verify": "tsc --noEmit && eslint . && prettier --check . && vitest run && next build"
   },

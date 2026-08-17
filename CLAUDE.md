@@ -5,6 +5,10 @@ context compilation, governance, Brain, or amendments. Read
 `docs/operations/F0_BASELINE_2026-08-17.md` before changing deployment or
 migrations.
 
+`docs/operations/VERCEL_DEPLOYMENT.md` is the only current production runbook.
+Do not rely on an older Vercel project or a shared database without a verified
+Drizzle ledger.
+
 ## Active scope
 
 F0 and F1 are implemented. Do not infer authorization for F2 or later work:

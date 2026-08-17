@@ -2,6 +2,13 @@ import { AtlasShell } from "@/components/layout/atlas-shell";
 import { requireOwner } from "@/lib/auth/guards";
 import { listConversations } from "@/lib/conversation/service";
 
+// This entire route group contains owner-private database state. Keep it out
+// of static generation and every shared response cache even if its internals
+// are refactored later.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const runtime = "nodejs";
+
 export default async function AtlasLayout({
   children,
 }: {
