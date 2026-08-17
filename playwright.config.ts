@@ -1,11 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
 /**
- * Phase 0 establishes the E2E harness and proves it runs against a real build.
- * It deliberately contains ONE smoke test — Build Plan Phase 0 says not to
- * manufacture E2E coverage for features that do not exist yet.
- *
- * Real flows (sign-in, streaming, interrupt) arrive in Phases 1–2.
+ * Phase 1 exercises the public auth entry, protected-route boundary, PWA
+ * assets, and realistic desktop/mobile layouts against a production server.
  */
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -24,12 +21,16 @@ export default defineConfig({
 
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-    // Mobile is the primary target (Build Plan §16). Added in Phase 1 once
-    // there is a real interface to exercise.
+    { name: "mobile-chromium", use: { ...devices["Pixel 7"] } },
   ],
 
   webServer: {
-    command: "pnpm build && pnpm start",
+    // CI and Vercel verify canonical Turbopack. The local Codex sandbox cannot
+    // bind Turbopack's CSS worker port, so local E2E uses the equivalent
+    // production webpack compiler without changing the repository build script.
+    command: process.env.CI
+      ? "pnpm build && pnpm start"
+      : "pnpm exec next build --webpack && pnpm start",
     url: "http://127.0.0.1:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,

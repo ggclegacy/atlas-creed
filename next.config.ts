@@ -16,7 +16,8 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
 
-  // Secure defaults. Expanded in Phase 1 alongside auth and CSP.
+  // Secure defaults. Authentication and data access stay server-side; this
+  // browser policy permits only Atlas-owned resources at rest.
   poweredByHeader: false,
 
   headers: () =>
@@ -27,6 +28,37 @@ const nextConfig: NextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "X-Frame-Options", value: "DENY" },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+          {
+            key: "Permissions-Policy",
+            value:
+              "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+          },
+          {
+            key: "Content-Security-Policy",
+            value: [
+              "default-src 'self'",
+              `script-src 'self' 'unsafe-inline'${
+                process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
+              }`,
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: blob:",
+              "font-src 'self'",
+              "connect-src 'self'",
+              "worker-src 'self' blob:",
+              "manifest-src 'self'",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "frame-ancestors 'none'",
+              ...(process.env.NODE_ENV === "production"
+                ? ["upgrade-insecure-requests"]
+                : []),
+            ].join("; "),
+          },
         ],
       },
     ]),

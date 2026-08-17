@@ -1,5 +1,16 @@
 name: CI
 
+# Non-sensitive, non-routable fixtures let Next compile and let unauthenticated
+# route tests run. CI never attempts a database query or sends email.
+env:
+  DATABASE_URL: postgresql://atlas:atlas@127.0.0.1:5432/atlas_ci
+  DATABASE_ENVIRONMENT: development
+  AUTH_SECRET: ci-only-auth-secret-at-least-32-characters
+  AUTH_RESEND_KEY: re_ci_only_not_a_real_key
+  AUTH_EMAIL_FROM: Atlas CI <atlas@example.com>
+  OWNER_EMAIL: owner@example.com
+  AUTH_URL: http://127.0.0.1:3000
+
 on:
   push:
     branches: [main]

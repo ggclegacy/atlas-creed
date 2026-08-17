@@ -39,6 +39,7 @@
 
   --color-accent-authority: var(--accent-authority);
   --color-accent-authority-strong: var(--accent-authority-strong);
+  --color-accent-authority-muted: var(--accent-authority-muted);
   --color-accent-cognition: var(--accent-cognition);
 
   --color-signal-positive: var(--signal-positive);
@@ -66,6 +67,8 @@
 
 html {
   color-scheme: dark;
+  min-height: 100%;
+  background: var(--surface-void);
 }
 
 body {
@@ -78,6 +81,31 @@ body {
   line-height: var(--text-leading-body);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  min-height: 100dvh;
+  margin: 0;
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  touch-action: manipulation;
+}
+
+.auth-ground {
+  background:
+    linear-gradient(
+        90deg,
+        transparent 0,
+        var(--border-hairline) 50%,
+        transparent 100%
+      )
+      50% 100% / min(42rem, 86vw) 1px no-repeat,
+    var(--surface-void);
 }
 
 /* Focus is hierarchy. It is always visible and never removed. */

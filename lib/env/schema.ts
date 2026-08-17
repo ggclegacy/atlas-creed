@@ -7,10 +7,14 @@ import { z } from "zod";
  * `server-only`; `client.ts` reads inlined literals). Keeping the schemas here
  * means tests can exercise validation without tripping those guards.
  *
- * Build Plan §14. Variables are added as the phases that need them arrive —
- * an env schema demanding DATABASE_URL before Phase 1 would block every
- * developer for no benefit.
+ * Build Plan §14. Variables are added only when their approved phase arrives.
+ * Phase 1 now requires the database and authentication values below.
  */
+
+const emailFromSchema = z.string().refine((value) => {
+  const bracketedAddress = value.match(/<([^<>]+)>$/)?.[1];
+  return z.email().safeParse(bracketedAddress ?? value).success;
+}, "Must be an email address or a display name followed by <email@example.com>");
 
 /** Server-only configuration. Never sent to the browser. */
 export const serverEnvSchema = z.object({
@@ -18,7 +22,23 @@ export const serverEnvSchema = z.object({
     .enum(["development", "test", "production"])
     .default("development"),
 
-  // Phase 1 adds: DATABASE_URL, AUTH_SECRET, AUTH_URL, RESEND_API_KEY
+  DATABASE_URL: z
+    .url()
+    .refine(
+      (value) =>
+        value.startsWith("postgres://") || value.startsWith("postgresql://"),
+      "Must be a PostgreSQL connection URL",
+    ),
+  DATABASE_ENVIRONMENT: z
+    .enum(["development", "preview", "production"])
+    .default("development"),
+  AUTH_SECRET: z.string().min(32, "Must contain at least 32 characters"),
+  AUTH_RESEND_KEY: z.string().startsWith("re_"),
+  AUTH_EMAIL_FROM: emailFromSchema,
+  OWNER_EMAIL: z.email(),
+  AUTH_URL: z.url().optional(),
+  VERCEL_ENV: z.enum(["development", "preview", "production"]).optional(),
+
   // Phase 2 adds: ANTHROPIC_API_KEY
 });
 

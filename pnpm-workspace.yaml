@@ -7,6 +7,10 @@
 # Add a package here only after deciding it genuinely needs to run code at
 # install time, and record why.
 allowBuilds:
+  # Native TypeScript/JavaScript transformer used by Drizzle Kit and Vitest.
+  # These tools require esbuild's platform binary; pnpm still pins and verifies
+  # the package through the lockfile before this install script may run.
+  esbuild: true
   # Native module resolver used by eslint-plugin-import-x, which
   # eslint-config-next depends on. Linting fails without its native binding.
   unrs-resolver: true

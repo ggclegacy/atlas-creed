@@ -1,31 +1,66 @@
 import { expect, test } from "@playwright/test";
 
-/**
- * Phase 0 E2E: exactly one smoke test.
- *
- * Its only job is to prove the harness runs against a real production build —
- * that Playwright, the Next build, and the token pipeline actually work
- * together. Build Plan Phase 0 explicitly forbids manufacturing E2E coverage
- * for features that do not exist yet.
- *
- * Real flows (sign-in, streaming, interrupt, memory) arrive in Phases 1–2.
- */
-test("the application boots and renders with tokens applied", async ({
+test("an unauthenticated visitor is sent to the private sign-in entry", async ({
   page,
 }) => {
   await page.goto("/");
 
-  await expect(page.getByTestId("phase-marker")).toContainText("Phase 0");
+  await expect(page).toHaveURL(/\/sign-in$/);
   await expect(
-    page.getByRole("heading", { level: 1, name: /Atlas Creed/i }),
+    page.getByRole("heading", { level: 1, name: "Enter the environment." }),
   ).toBeVisible();
 
-  // The semantic token layer must resolve to a real value, not an empty string.
-  // A broken token pipeline would still render text, so assert the computed
-  // background rather than trusting the page to look right.
   const background = await page.evaluate(
     () => getComputedStyle(document.body).backgroundColor,
   );
   expect(background).not.toBe("");
   expect(background).not.toBe("rgba(0, 0, 0, 0)");
+});
+
+test("auth messaging does not disclose the configured owner", async ({
+  page,
+}) => {
+  await page.goto("/sign-in/check-email");
+  await expect(
+    page.getByRole("heading", { name: "Check your email." }),
+  ).toBeVisible();
+  await expect(page.getByText(/if the address is authorized/i)).toBeVisible();
+  await expect(page.getByText("owner@example.com")).toHaveCount(0);
+});
+
+test("PWA and security assets are served with production headers", async ({
+  request,
+}) => {
+  const manifest = await request.get("/manifest.webmanifest");
+  expect(manifest.ok()).toBe(true);
+  const manifestBody: unknown = await manifest.json();
+  expect(manifestBody).toMatchObject({ display: "standalone" });
+
+  const icon = await request.get("/icon-maskable-512.png");
+  expect(icon.ok()).toBe(true);
+
+  const signIn = await request.get("/sign-in");
+  expect(signIn.headers()["x-frame-options"]).toBe("DENY");
+  expect(signIn.headers()["content-security-policy"]).toContain(
+    "frame-ancestors 'none'",
+  );
+});
+
+test("the sign-in surface fits a realistic phone viewport", async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(!isMobile, "mobile ergonomics assertion");
+  await page.goto("/sign-in");
+
+  const dimensions = await page.evaluate(() => ({
+    innerWidth: window.innerWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+  }));
+  expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.innerWidth);
+
+  const submit = await page
+    .getByRole("button", { name: "Send secure link" })
+    .boundingBox();
+  expect(submit?.height).toBeGreaterThanOrEqual(44);
 });
