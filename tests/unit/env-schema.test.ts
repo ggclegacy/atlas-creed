@@ -1,11 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  clientEnvSchema,
-  parseClientEnv,
-  parseServerEnv,
-  serverEnvSchema,
-} from "../../lib/env/schema";
+import { parseServerEnv } from "../../lib/env/schema";
 
 /**
  * Configuration must fail loudly at startup, never as `undefined` deep inside a
@@ -14,6 +9,7 @@ import {
 
 const validServerEnv = {
   DATABASE_URL: "postgresql://atlas:atlas@127.0.0.1:5432/atlas_test",
+  DATABASE_ENVIRONMENT: "development",
   AUTH_SECRET: "test-only-auth-secret-at-least-32-characters",
   AUTH_RESEND_KEY: "re_test_only_not_a_real_key",
   AUTH_EMAIL_FROM: "Atlas Test <atlas@example.com>",
@@ -42,8 +38,10 @@ describe("server environment schema", () => {
 
   it("names every missing Phase 1 requirement", () => {
     expect(() => parseServerEnv({})).toThrowError(/DATABASE_URL/);
+    expect(() => parseServerEnv({})).toThrowError(/DATABASE_ENVIRONMENT/);
     expect(() => parseServerEnv({})).toThrowError(/AUTH_SECRET/);
     expect(() => parseServerEnv({})).toThrowError(/AUTH_RESEND_KEY/);
+    expect(() => parseServerEnv({})).toThrowError(/AUTH_EMAIL_FROM/);
     expect(() => parseServerEnv({})).toThrowError(/OWNER_EMAIL/);
   });
 
@@ -76,34 +74,5 @@ describe("server environment schema", () => {
         SOMETHING_ELSE: "x",
       }),
     ).not.toThrow();
-  });
-});
-
-describe("client environment schema", () => {
-  it("defaults the app name", () => {
-    expect(parseClientEnv({}).NEXT_PUBLIC_APP_NAME).toBe("Atlas Creed");
-  });
-
-  it("rejects an empty app name", () => {
-    expect(() => parseClientEnv({ NEXT_PUBLIC_APP_NAME: "" })).toThrowError(
-      /NEXT_PUBLIC_APP_NAME/,
-    );
-  });
-
-  it("exposes only NEXT_PUBLIC_ keys — anything else would leak to the browser", () => {
-    const keys = Object.keys(clientEnvSchema.shape);
-    expect(keys.length).toBeGreaterThan(0);
-    for (const key of keys) {
-      expect(
-        key.startsWith("NEXT_PUBLIC_"),
-        `${key} must be NEXT_PUBLIC_`,
-      ).toBe(true);
-    }
-  });
-
-  it("keeps server-only keys out of the client schema", () => {
-    const serverKeys = Object.keys(serverEnvSchema.shape);
-    const clientKeys = Object.keys(clientEnvSchema.shape);
-    expect(clientKeys.some((k) => serverKeys.includes(k))).toBe(false);
   });
 });

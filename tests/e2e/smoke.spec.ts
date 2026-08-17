@@ -5,7 +5,7 @@ test("an unauthenticated visitor is sent to the private sign-in entry", async ({
 }) => {
   await page.goto("/");
 
-  await expect(page).toHaveURL(/\/sign-in$/);
+  await expect.poll(() => new URL(page.url()).pathname).toBe("/sign-in");
   await expect(
     page.getByRole("heading", { level: 1, name: "Enter the environment." }),
   ).toBeVisible();

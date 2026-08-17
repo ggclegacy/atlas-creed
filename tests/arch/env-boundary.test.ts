@@ -59,6 +59,27 @@ async function collectSourceFiles(dir: string): Promise<string[]> {
 }
 
 describe("secrets must never be client-exposed", () => {
+  it("Phase 1 declares and reads no client-exposed environment variables", async () => {
+    const example = await readFile(path.join(ROOT, ".env.example"), "utf8");
+    const declared = example
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line.startsWith("NEXT_PUBLIC_") && line.includes("="));
+
+    const files = await collectSourceFiles(ROOT);
+    const reads: string[] = [];
+    for (const file of files) {
+      const source = await readFile(file, "utf8");
+      if (file.endsWith("env-boundary.test.ts")) continue;
+      if (/process\.env\.NEXT_PUBLIC_[A-Z0-9_]+/.test(source)) {
+        reads.push(path.relative(ROOT, file));
+      }
+    }
+
+    expect(declared).toEqual([]);
+    expect(reads).toEqual([]);
+  });
+
   it("no NEXT_PUBLIC_ variable in .env.example has a secret-like name", async () => {
     const contents = await readFile(path.join(ROOT, ".env.example"), "utf8");
 

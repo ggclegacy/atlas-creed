@@ -13,7 +13,8 @@
 - Function region: `iad1`, enforced by `vercel.json` to match the approved Neon region
 
 Do not add custom install, build, or output commands unless a measured incompatibility requires
-one. The lockfile and `packageManager` field select pnpm 11.18.0.
+one. The lockfile and `packageManager` field select pnpm 11.18.0. No `.vercel` directory is
+required or committed; a fresh Git import is the supported path.
 
 ## Environment contract
 
@@ -21,21 +22,30 @@ Secret values belong in Vercel project environment variables, never in Git or de
 Vercel's `NODE_ENV`, `VERCEL`, and `VERCEL_ENV` values are platform-owned and must not be
 overridden.
 
-| Name | Purpose | Sensitivity | Production | Preview | Development |
+Phase 1 has **no required build-time environment variables** and no client-exposed environment
+variables. The values below are server-only and validated on the first request that initializes
+Auth.js/Neon. Missing or invalid requirements fail together with a named validation error. They
+must still be configured before the first deployment is considered usable.
+
+| Name | Timing | Sensitivity | Production | Preview | Development |
 |---|---|---:|---:|---:|---:|
-| `DATABASE_URL` | Neon Postgres connection URL | Secret | Required: production branch | Required: preview branch only | Required: local/dev branch |
-| `DATABASE_ENVIRONMENT` | Fails closed on deployment/database scope mismatch | Non-secret | `production` | `preview` | `development` |
-| `AUTH_SECRET` | Auth.js token and cookie cryptography | Secret | Required, unique | Required, separate from production | Required, separate from hosted values |
-| `AUTH_RESEND_KEY` | Sends short-lived magic links through Resend | Secret | Required | Required only if preview sign-in is enabled; use a separately scoped key | Required for live email testing |
-| `AUTH_EMAIL_FROM` | Verified Resend sender identity | Non-secret | Required | Required when preview sign-in is enabled | Required for live email testing |
-| `OWNER_EMAIL` | Exact single-owner allowlist | Sensitive configuration | Required | Required | Required |
-| `AUTH_URL` | Explicit Auth.js origin | Non-secret | Omit on Vercel | Omit on Vercel | Optional; required for local `next start` |
-| `NEXT_PUBLIC_APP_NAME` | Public display name | Public | Optional; defaults to Atlas Creed | Optional | Optional |
+| `DATABASE_URL` | Required runtime | Secret | Required: production branch | Required: preview branch | Required to run the app |
+| `DATABASE_ENVIRONMENT` | Required runtime | Non-secret | `production` | `preview` | `development` |
+| `AUTH_SECRET` | Required runtime | Secret | Required, unique | Required, separate from production | Required, separate from hosted values |
+| `AUTH_RESEND_KEY` | Required runtime | Secret | Required | Required; use a separately scoped key | Required to run the app |
+| `AUTH_EMAIL_FROM` | Required runtime | Non-secret | Required | Required | Required to run the app |
+| `OWNER_EMAIL` | Required runtime | Sensitive configuration | Required | Required | Required to run the app |
+| `AUTH_URL` | Optional runtime | Non-secret | Omit on Vercel | Omit on Vercel | Optional for non-Vercel hosts |
+
+`NODE_ENV` and `VERCEL_ENV` are server-only, platform-owned inputs. Next.js supplies `NODE_ENV`;
+Vercel supplies `VERCEL_ENV`. Neither belongs in Vercel project settings. There are no
+development-only, preview-only, or production-only user-managed variable names; deployment scope
+is represented by each value and by `DATABASE_ENVIRONMENT`.
 
 Preview and production values must be added to their separate Vercel scopes. Never copy the
-production `DATABASE_URL` or `AUTH_SECRET` into Preview. If preview authentication is not being
-tested yet, do not deploy a nonfunctional preview with fabricated email credentials; configure a
-real, restricted preview key or keep preview deployment blocked until it exists.
+production `DATABASE_URL` or `AUTH_SECRET` into Preview. Do not deploy a nonfunctional preview
+with fabricated email credentials; configure a real, restricted preview key or leave that scope
+undeployed until it exists.
 
 ## Neon
 
@@ -68,8 +78,9 @@ Postgres; Auth.js applies `HttpOnly`, `Secure`, and `SameSite=Lax` cookie defaul
 
 ## Deployment sequence
 
-1. Run `pnpm install --frozen-lockfile`, `pnpm typecheck`, `pnpm lint`,
-   `pnpm format:check`, `pnpm test`, `pnpm db:check`, `pnpm build`, and `pnpm test:e2e`.
+1. Run `corepack pnpm install --frozen-lockfile`, `corepack pnpm typecheck`,
+   `corepack pnpm lint`, `corepack pnpm format:check`, `corepack pnpm test`,
+   `corepack pnpm db:check`, `corepack pnpm build`, and `corepack pnpm test:e2e`.
 2. Confirm the committed migration and a clean secret scan.
 3. Push the verified commit to `main` and confirm GitHub Actions.
 4. Link the existing Vercel project, or create `atlas-creed` if no project exists, and connect it

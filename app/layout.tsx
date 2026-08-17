@@ -1,15 +1,16 @@
 import type { Metadata, Viewport } from "next";
 
 import { PwaRegistration } from "@/components/pwa/pwa-registration";
-import { clientEnv } from "@/lib/env/client";
 
 import "./globals.css";
 
+const APP_NAME = "Atlas Creed";
+
 export const metadata: Metadata = {
-  applicationName: clientEnv.NEXT_PUBLIC_APP_NAME,
+  applicationName: APP_NAME,
   title: {
-    default: clientEnv.NEXT_PUBLIC_APP_NAME,
-    template: `%s · ${clientEnv.NEXT_PUBLIC_APP_NAME}`,
+    default: APP_NAME,
+    template: `%s · ${APP_NAME}`,
   },
   description: "A persistent personal intelligence system.",
   manifest: "/manifest.webmanifest",

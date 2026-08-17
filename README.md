@@ -91,11 +91,12 @@ Two boundaries are enforced by lint and _proved_ by tests in
 tests alike, so the tests cannot drift from the real configuration.
 
 1. **Provider SDKs** may only be imported inside `lib/model/`.
-2. **`process.env`** may only be read inside `lib/env/`; everything else imports
-   validated config.
+2. **`process.env`** may only be read inside `lib/env/`; everything else calls
+   the validated server configuration helper.
 
 **No secret may ever carry the `NEXT_PUBLIC_` prefix** — those values are inlined
-into the browser bundle and are public permanently. A test enforces this.
+into the browser bundle and are public permanently. Phase 1 exposes no client
+environment variables, and a test enforces the secret-name boundary.
 
 ---
 

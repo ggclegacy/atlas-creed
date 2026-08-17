@@ -63,9 +63,9 @@ A bare `pnpm ...` will fail with *command not found* unless a shim has been adde
 **Architecture boundaries** are defined once in [`architecture.json`](architecture.json), applied by [`eslint.config.mjs`](eslint.config.mjs), and proved by [`tests/arch/`](tests/arch/). One definition means tests cannot drift from the real config and quietly start proving nothing. Two boundaries exist today:
 
 1. **Provider SDKs** may only be imported inside `lib/model/`.
-2. **`process.env`** may only be read inside `lib/env/` (plus config files and tests). Everything else imports validated config.
+2. **`process.env`** may only be read inside `lib/env/` (plus config files and tests). Everything else calls the validated configuration helper.
 
-**Environment.** `lib/env/schema.ts` holds pure, testable Zod schemas. `lib/env/server.ts` adds `server-only` so importing it from a Client Component is a build failure. `lib/env/client.ts` reads `NEXT_PUBLIC_*` literals. **No secret may ever carry the `NEXT_PUBLIC_` prefix** — those values are inlined into the browser bundle and are public permanently. A test enforces this against a secret-name pattern.
+**Environment.** `lib/env/schema.ts` holds the pure, testable server Zod schema. `lib/env/server.ts` adds `server-only` and validates lazily on the first server execution path that needs Phase 1 services, so runtime secrets are not required merely to inspect routes at build time. Phase 1 has no client environment variables. **No secret may ever carry the `NEXT_PUBLIC_` prefix** — those values are inlined into the browser bundle and are public permanently. A test enforces this against a secret-name pattern.
 
 **Design tokens are two layers.** [`styles/tokens/primitives.css`](styles/tokens/primitives.css) holds the ratified raw values. [`styles/tokens/semantic.css`](styles/tokens/semantic.css) is the stable layer that names roles (`--surface-card`, `--accent-authority`). **Components use semantic tokens only.** Primitives are deliberately not exposed as Tailwind utilities, so a component cannot reach past the semantic layer. Evidence-based tuning belongs in primitives and must be recorded; components must not drift around the semantic layer.
 
