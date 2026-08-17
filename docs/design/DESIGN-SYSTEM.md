@@ -1,3 +1,7 @@
+> ⚠️ **SUPERSEDED.** Absorbed into [../ATLAS_DESIGN_SYSTEM_V1.md](../ATLAS_DESIGN_SYSTEM_V1.md),
+> which is the authoritative visual and interaction standard. Kept for the
+> measurement history only — do not build from it.
+
 # Atlas Creed — Design System
 
 **Status:** Proposed v0.1 — not ratified

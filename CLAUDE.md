@@ -69,8 +69,17 @@ A bare `pnpm ...` will fail with *command not found* unless a shim has been adde
 
 ## Design system
 
-[docs/design/DESIGN-SYSTEM.md](docs/design/DESIGN-SYSTEM.md) translates canon §11–§14 into measured values and seven enforceable laws.
+[docs/ATLAS_DESIGN_SYSTEM_V1.md](docs/ATLAS_DESIGN_SYSTEM_V1.md) is the authoritative visual and interaction standard. `docs/design/DESIGN-SYSTEM.md` is a superseded earlier exploration.
 
-Status is **proposed, not ratified** — four decisions are still the owner's: typeface, dark-only commitment, the gold ratio, and whether purple ships at all. **This blocks Phase 1 UI work.**
+Status is **proposed, awaiting owner ratification** — sixteen decisions are listed at the end of that document. **This blocks Phase 1 interface work.**
 
-Never add a color token without measuring contrast and hue separation first — three of the system's laws exist because a measurement contradicted an intuition.
+The thesis in one line: **Atlas is an environment, not an application.** The chrome recedes; thinking is the content. A screen converted to grayscale must still read as Atlas.
+
+Four rules that get violated by reflex:
+
+- **Text on a gold fill is obsidian, never white** (white = 2.97:1, fails).
+- **Gold ≤ 5% of a screen, 2–3% typical.** Solid gold fill is reserved for the composer's send and irreversible confirmations — not every primary button.
+- **Purple is 0% at rest.** It means one thing: Atlas is doing cognitive work. Never a button, border, or ambient gradient.
+- **Borders cannot carry information** — a structural border on near-black tops out near 1.6:1. State comes from surface shift, gold, or a semantic colour.
+
+Never add a colour token without measuring contrast and hue separation first — several of the system's rules exist because a measurement contradicted an intuition.
