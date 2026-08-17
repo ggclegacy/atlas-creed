@@ -1,65 +1,100 @@
-/**
- * Atlas Creed — model layer contract.
- *
- * Build Plan §7 / Bible §22: Atlas must not be architecturally confused with
- * the model currently powering him. Provider SDKs are importable ONLY inside
- * this directory (enforced by ESLint; proved by tests/arch/model-boundary).
- *
- * `AtlasEvent` is deliberately OUR union, not a re-export of any provider's
- * event types. The provider's wire format stops at the adapter boundary — that
- * is what makes swapping providers an added file rather than a refactor.
- *
- * Phase 0 defines the contract only. No adapter is implemented, no SDK is
- * installed, and no model is called until Phase 2.
- */
+import type { z } from "zod";
 
-/**
- * Which class of work a call belongs to.
- *
- * Both resolve to the same model in V1 — by configuration, not by assumption.
- * Background work (titling, extraction, classification, summarization) may
- * later move to a cheaper model through this same interface. The distinction
- * costs nothing now and preserves the option.
- */
+import type { AtlasMessageContent } from "@/lib/conversation/content";
+
 export type ModelRole = "conversation" | "background";
+export type ReasoningEffort = "none" | "low" | "medium" | "high";
 
-export interface AtlasMessage {
+export interface AtlasInputMessage {
   readonly role: "user" | "assistant";
-  /**
-   * The full content-block array, never flattened to a string.
-   * Reasoning blocks must round-trip unmodified when continuing on the same
-   * model; flattening is very expensive to undo later (Build Plan §9).
-   */
-  readonly content: readonly unknown[];
+  readonly content: AtlasMessageContent;
 }
 
 export interface AtlasRequest {
-  readonly role: ModelRole;
-  readonly system: readonly string[];
-  readonly messages: readonly AtlasMessage[];
-  readonly maxTokens: number;
+  readonly instructions: readonly string[];
+  readonly messages: readonly AtlasInputMessage[];
+  readonly maxOutputTokens: number;
+  readonly reasoning: ReasoningEffort;
+}
+
+export interface AtlasStructuredRequest<T> extends AtlasRequest {
+  readonly schema: z.ZodType<T>;
+  readonly schemaName: string;
 }
 
 export interface AtlasUsage {
-  readonly inputTokens: number;
-  readonly outputTokens: number;
-  /**
-   * The health metric for the whole context architecture. Zero across
-   * consecutive turns within a session means the cached prefix is broken
-   * (Build Plan §18).
-   */
-  readonly cacheReadInputTokens: number;
-  readonly cacheCreationInputTokens: number;
+  readonly inputTokens: number | null;
+  readonly outputTokens: number | null;
+  readonly cachedInputTokens: number | null;
+  readonly cacheWriteInputTokens: number | null;
+  readonly reasoningTokens: number | null;
+  readonly totalTokens: number | null;
+}
+
+export type AtlasFinishReason =
+  | "completed"
+  | "refusal"
+  | "max_output_tokens"
+  | "content_filter"
+  | "cancelled"
+  | "failed"
+  | "unknown";
+
+export type AtlasErrorCode =
+  | "authentication"
+  | "permission"
+  | "rate_limit"
+  | "timeout"
+  | "connection"
+  | "invalid_request"
+  | "provider_error"
+  | "cancelled"
+  | "invalid_response";
+
+export class AtlasModelError extends Error {
+  readonly diagnosticCode: string | null;
+
+  constructor(
+    public readonly code: AtlasErrorCode,
+    message: string,
+    public readonly retryable: boolean,
+    options?: ErrorOptions & { readonly diagnosticCode?: string },
+  ) {
+    super(message, options?.cause ? { cause: options.cause } : undefined);
+    this.name = "AtlasModelError";
+    this.diagnosticCode = options?.diagnosticCode ?? null;
+  }
 }
 
 export type AtlasEvent =
+  | {
+      readonly type: "generation_started";
+      readonly requestId: string | null;
+      readonly responseId: string | null;
+    }
   | { readonly type: "text_delta"; readonly text: string }
-  | { readonly type: "thinking_start" }
+  | { readonly type: "refusal_delta"; readonly text: string }
   | { readonly type: "usage"; readonly usage: AtlasUsage }
-  | { readonly type: "done"; readonly stopReason: string }
-  | { readonly type: "error"; readonly message: string };
+  | {
+      readonly type: "completed";
+      readonly finishReason: AtlasFinishReason;
+      readonly responseId: string | null;
+    };
+
+export interface AtlasStructuredResult<T> {
+  readonly value: T;
+  readonly requestId: string | null;
+  readonly responseId: string | null;
+  readonly finishReason: AtlasFinishReason;
+  readonly usage: AtlasUsage;
+}
 
 export interface AtlasModel {
-  readonly id: string;
+  readonly provider: string;
+  readonly modelId: string;
   stream(request: AtlasRequest, signal: AbortSignal): AsyncIterable<AtlasEvent>;
+  structured<T>(
+    request: AtlasStructuredRequest<T>,
+    signal: AbortSignal,
+  ): Promise<AtlasStructuredResult<T>>;
 }

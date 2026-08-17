@@ -10,6 +10,11 @@ import { parseServerEnv } from "../../lib/env/schema";
 const validServerEnv = {
   DATABASE_URL: "postgresql://atlas:atlas@127.0.0.1:5432/atlas_test",
   DATABASE_ENVIRONMENT: "development",
+  AUTH_SECRET: "test-only-secret-that-is-at-least-32-characters",
+  AUTH_RESEND_KEY: "re_test_only",
+  AUTH_EMAIL_FROM: "Atlas <atlas@example.com>",
+  OWNER_EMAIL: "owner@example.com",
+  OPENAI_API_KEY: "sk-test-only-not-a-real-key",
 } as const;
 
 describe("server environment schema", () => {
@@ -32,9 +37,27 @@ describe("server environment schema", () => {
     expect(() => parseServerEnv(invalid)).toThrowError(/\.env\.example/);
   });
 
-  it("names every missing Phase 1 database requirement", () => {
+  it("names every missing runtime requirement", () => {
     expect(() => parseServerEnv({})).toThrowError(/DATABASE_URL/);
     expect(() => parseServerEnv({})).toThrowError(/DATABASE_ENVIRONMENT/);
+  });
+
+  it("applies approved model and spend defaults", () => {
+    const parsed = parseServerEnv(validServerEnv);
+    expect(parsed.ATLAS_CONVERSATION_MODEL).toBe("gpt-5.6-sol");
+    expect(parsed.ATLAS_BACKGROUND_MODEL).toBe("gpt-5.6-terra");
+    expect(parsed.ATLAS_DAILY_SOFT_LIMIT_USD).toBe(10);
+    expect(parsed.ATLAS_MONTHLY_HARD_LIMIT_USD).toBe(150);
+  });
+
+  it("rejects a monthly ceiling below the daily warning", () => {
+    expect(() =>
+      parseServerEnv({
+        ...validServerEnv,
+        ATLAS_DAILY_SOFT_LIMIT_USD: "20",
+        ATLAS_MONTHLY_HARD_LIMIT_USD: "10",
+      }),
+    ).toThrowError(/Monthly hard limit/);
   });
 
   it("rejects non-Postgres database URLs", () => {
