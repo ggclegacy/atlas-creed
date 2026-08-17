@@ -1,6 +1,6 @@
 "use client";
 
-import { History, LogOut, Menu, Plus, Settings, X } from "lucide-react";
+import { Brain, History, LogOut, Menu, Plus, Settings, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -93,6 +93,7 @@ export function AtlasShell({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const settingsActive = pathname.startsWith("/settings");
+  const brainActive = pathname.startsWith("/brain");
 
   return (
     <div className="min-h-dvh bg-surface-base">
@@ -126,6 +127,15 @@ export function AtlasShell({
           >
             <History className="size-[1.125rem]" strokeWidth={1.6} />
           </button>
+          <Link
+            href="/brain"
+            aria-label="Brain"
+            title="Brain"
+            aria-current={brainActive ? "page" : undefined}
+            className={`flex size-11 items-center justify-center rounded-inline ${brainActive ? "bg-[var(--state-selected)] text-text-accent" : "text-text-tertiary hover:bg-[var(--state-hover)] hover:text-text-primary"}`}
+          >
+            <Brain className="size-[1.125rem]" strokeWidth={1.6} />
+          </Link>
           <Link
             href="/settings"
             aria-label="Settings"
@@ -199,6 +209,13 @@ export function AtlasShell({
               close={() => setMobileOpen(false)}
             />
             <div className="border-t border-border-hairline p-3">
+              <Link
+                href="/brain"
+                onClick={() => setMobileOpen(false)}
+                className="flex min-h-11 items-center gap-3 px-3 text-[.875rem] text-text-secondary hover:text-text-primary"
+              >
+                <Brain className="size-4" /> Brain
+              </Link>
               <Link
                 href="/settings"
                 onClick={() => setMobileOpen(false)}

@@ -21,6 +21,10 @@ type ModelEvent = {
   readonly cachedInputTokens?: number | null;
   readonly outputTokens?: number | null;
   readonly reasoningTokens?: number | null;
+  readonly contextTraceId?: string | null;
+  readonly contextSize?: number | null;
+  readonly retrievedItemCount?: number | null;
+  readonly taskCategory?: string | null;
   readonly errorCode?: string | null;
   readonly diagnosticCode?: string | null;
   readonly persisted?: boolean;

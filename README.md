@@ -1,119 +1,75 @@
 # Atlas Creed
 
-A persistent personal intelligence system.
+Atlas Creed is a private, single-owner personal intelligence environment built
+with Next.js, Postgres/Neon, Auth.js, and a provider-neutral model boundary.
 
-**Status: Phase 0 (Foundation) complete. Phase 1 (Skeleton) authorized and in
-progress.** No AI calls or Phase 2 product features are implemented. See
-[`docs/ATLAS_V1_BUILD_PLAN.md`](docs/ATLAS_V1_BUILD_PLAN.md) for the approved
-architecture and phase plan.
+**Current status:** the committed Phase 2 application is the reconciled F0
+baseline. F1 adds the constitutional foundation: a compact kernel, a
+checksummed 001-011 canon registry, governed living-company knowledge, scoped
+context compilation, safe context traces, protected amendment workflow, and a
+read-first Brain view. F2 and later capabilities remain out of scope.
 
----
+## Start locally
 
-## Prerequisites
-
-| Requirement | Version     | Notes                                                                       |
-| ----------- | ----------- | --------------------------------------------------------------------------- |
-| Node.js     | **24.x**    | Pinned in [`.nvmrc`](.nvmrc); CI reads the same file. Verified on v24.19.0. |
-| pnpm        | **11.18.0** | Pinned by the `packageManager` field. Do not install globally — see below.  |
-
-### Running pnpm — no PATH changes required
-
-Node ships **Corepack**, which reads the `packageManager` field in
-`package.json` and runs the exact pinned pnpm version. Prefix any command:
+Node 24 and pnpm 11.18.0 are pinned by `.nvmrc` and `package.json`.
 
 ```bash
 corepack pnpm install
-corepack pnpm verify
-```
-
-This is the canonical invocation. It needs no global install, no PATH edit, and
-guarantees everyone uses the same pnpm version.
-
-<details>
-<summary>Optional: a bare <code>pnpm</code> command</summary>
-
-If you prefer typing `pnpm` directly, install a Corepack shim into a
-user-writable directory and add it to your PATH yourself:
-
-```bash
-mkdir -p ~/.local/bin
-corepack enable --install-directory ~/.local/bin pnpm
-# then add to ~/.zshrc (or your shell profile):
-export PATH="$HOME/.local/bin:$PATH"
-```
-
-`corepack enable` without `--install-directory` targets `/usr/local/bin` and
-requires root on macOS — avoid it.
-
-**Note:** without `pnpm` on PATH, `corepack pnpm test:e2e` fails, because
-Playwright's `webServer` spawns a plain shell that runs `pnpm build && pnpm
-start`. Either add the shim above, or run E2E with PATH extended for that
-command only:
-
-```bash
-PATH="$HOME/.local/bin:$PATH" corepack pnpm test:e2e
-```
-
-</details>
-
----
-
-## Setup
-
-```bash
-corepack pnpm install
-cp .env.example .env.local   # fill in values as later phases require them
+cp .env.example .env.local
 corepack pnpm dev
 ```
 
-The current Phase 1 shell uses direct access and contains no conversations,
-memory, or private owner data. Authentication must be added before any private
-capability is enabled on a public deployment.
+Use `corepack pnpm` unless a pnpm Corepack shim is already on `PATH`.
 
----
+## Important commands
 
-## Commands
+| Command                                                      | Purpose                                                                    |
+| ------------------------------------------------------------ | -------------------------------------------------------------------------- |
+| `corepack pnpm verify`                                       | Typecheck, lint, format check, unit tests, production build                |
+| `corepack pnpm test:integration`                             | Database-backed tests against an explicitly supplied test database         |
+| `corepack pnpm test:e2e`                                     | Authenticated browser stories; requires the documented fixture environment |
+| `corepack pnpm db:check`                                     | Validate Drizzle migration consistency                                     |
+| `corepack pnpm db:migrate`                                   | Apply migrations to the explicitly configured database                     |
+| `corepack pnpm canon:import -- --source-dir /private/source` | Rebuild normalized canon from private DOCX sources                         |
 
-| Command                                 | What it does                                                                           |
-| --------------------------------------- | -------------------------------------------------------------------------------------- |
-| `corepack pnpm dev`                     | Development server                                                                     |
-| `corepack pnpm build`                   | Production build                                                                       |
-| `corepack pnpm typecheck`               | `tsc --noEmit`                                                                         |
-| `corepack pnpm lint`                    | ESLint, including the architecture guards                                              |
-| `corepack pnpm format` / `format:check` | Prettier                                                                               |
-| `corepack pnpm test`                    | Vitest — unit and architecture tests                                                   |
-| `corepack pnpm test:e2e`                | Playwright smoke test (see PATH note above)                                            |
-| **`corepack pnpm verify`**              | **The full local gate: typecheck → lint → format → test → build.** Run before pushing. |
+The canon import stores normalized text, source references, checksums, and
+provenance. It does not copy private Word binaries into the repository.
 
----
+## F1 boundaries
 
-## Architecture guards
+- The Constitutional Kernel is provider-independent and always included.
+- Canon and living knowledge are retrieved by relevance, authority, project
+  scope, classification, and token budget.
+- Retrieved company material is labeled as data, never instructions.
+- `SECRETS` cannot be stored as canon or ordinary knowledge and cannot enter
+  context traces or model context.
+- Supersession and deletion are separate lifecycle states.
+- Ordinary conversation cannot amend the constitution. Approval and activation
+  require separate exact-phrase owner actions, evidence, and immutable versions.
+- Brain shows metadata, selected sources, conflicts, model identity, and actual
+  capability status—never credentials, secret values, or hidden reasoning.
+- Long-term memory, autonomous action, tools, agents, voice, Atlas Architect,
+  embeddings, and proactive jobs are not implemented in F1.
 
-Two boundaries are enforced by lint and _proved_ by tests in
-[`tests/arch/`](tests/arch/). Both are defined once in
-[`architecture.json`](architecture.json), read by the ESLint config and the
-tests alike, so the tests cannot drift from the real configuration.
+## Database safety
 
-1. **Provider SDKs** may only be imported inside `lib/model/`.
-2. **`process.env`** may only be read inside `lib/env/`; everything else calls
-   the validated server configuration helper.
+Do not run migrations against a shared or protected Neon branch until its
+schema is reconciled with the Drizzle migration ledger. The F0 audit found the
+existing shared branches had application tables but no
+`drizzle.__drizzle_migrations` history. Clean branch rehearsals are the source
+of truth until that separate deployment decision is approved.
 
-**No secret may ever carry the `NEXT_PUBLIC_` prefix** — those values are inlined
-into the browser bundle and are public permanently. Phase 1 exposes no client
-environment variables, and a test enforces the secret-name boundary.
+## Architecture rules
 
----
+Provider SDKs may only be imported in `lib/model/`. Runtime environment values
+may only be read in `lib/env/`. These boundaries are defined in
+`architecture.json`, enforced by ESLint, and tested in `tests/arch/`.
 
 ## Documentation
 
-| Document                                                                         | Purpose                                  |
-| -------------------------------------------------------------------------------- | ---------------------------------------- |
-| [`CLAUDE.md`](CLAUDE.md)                                                         | Working conventions and current phase    |
-| [`docs/canon/ATLAS-CREED-BIBLE.md`](docs/canon/ATLAS-CREED-BIBLE.md)             | Product canon — direction, not scope     |
-| [`docs/product/V1-PRODUCT-DEFINITION.md`](docs/product/V1-PRODUCT-DEFINITION.md) | What V1 must accomplish                  |
-| [`docs/ATLAS_V1_BUILD_PLAN.md`](docs/ATLAS_V1_BUILD_PLAN.md)                     | Approved architecture and phases 0–7     |
-| [`docs/ATLAS_DESIGN_SYSTEM_V1.md`](docs/ATLAS_DESIGN_SYSTEM_V1.md)               | Ratified visual and interaction standard |
-
-The Bible and V1 Product Definition paths above are canonical. Historical
-top-level aliases such as `docs/ATLAS_VISION_AND_STANDARDS.md` and
-`docs/ATLAS_V1_PRODUCT_DEFINITION.md` must not be recreated.
+- `docs/operations/F0_BASELINE_2026-08-17.md` — verified inherited baseline
+- `docs/architecture/F1_CONSTITUTIONAL_FOUNDATION.md` — implemented F1 design
+- `docs/ATLAS_FOUNDATIONAL_SYSTEM_BUILD_PLAN.md` — milestone roadmap
+- `docs/canon/ATLAS-CREED-BIBLE.md` — earlier product canon
+- `docs/product/V1-PRODUCT-DEFINITION.md` — V1 product definition
+- `docs/ATLAS_DESIGN_SYSTEM_V1.md` — interface standard

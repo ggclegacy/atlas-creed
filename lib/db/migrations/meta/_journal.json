@@ -15,6 +15,27 @@
       "when": 1786948306904,
       "tag": "0001_dear_iron_monger",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786958204282,
+      "tag": "0002_lucky_thundra",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1786958607540,
+      "tag": "0003_sparkling_mister_sinister",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1786959406245,
+      "tag": "0004_numerous_shadowcat",
+      "breakpoints": true
     }
   ]
 }

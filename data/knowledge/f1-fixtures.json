@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "projectSlug": "groomed-gent",
+      "sourceReference": "Groomed_Gent_Co_Living_Company_Context.docx",
+      "sourceChecksum": "2564fb0418b4d9dea77b7c503dfa76f3ff0edbe9609c0d5400d11e032f343a9e"
+    },
+    {
+      "projectSlug": "gent-logistics",
+      "sourceReference": "Gent_Logistics_Co_Living_Company_Context.docx",
+      "sourceChecksum": "0f3e22599bcf9c1ac992c4175bde270d341df89ee47bb30959e067b437669c09"
+    }
+  ],
+  "projects": [
+    {
+      "slug": "atlas",
+      "name": "Atlas",
+      "description": "Atlas constitutional and product context."
+    },
+    {
+      "slug": "groomed-gent",
+      "name": "Groomed Gent Co.",
+      "description": "Minimal living-company context fixture for F1 routing tests."
+    },
+    {
+      "slug": "gent-logistics",
+      "name": "Gent Logistics",
+      "description": "Minimal living-company context fixture for F1 routing tests."
+    }
+  ],
+  "records": [
+    {
+      "projectSlug": "groomed-gent",
+      "key": "ggc.parent-brand",
+      "title": "Groomed Gent parent brand",
+      "content": "Groomed Gent Co. is the parent brand and umbrella identity for the current working company map.",
+      "informationState": "CURRENT_FACT",
+      "authorityClass": "VALIDATED_KNOWLEDGE",
+      "confidence": 85,
+      "lastVerifiedAt": "2026-08-17T00:00:00.000Z"
+    },
+    {
+      "projectSlug": "groomed-gent",
+      "key": "ggc.legacy-sanctum-physical",
+      "title": "Physical Legacy Sanctum concept",
+      "content": "A future physical Legacy Sanctum combining grooming, wellness, recovery, community, and hospitality is a long-range exploratory concept, not a signed lease, fixed service menu, or committed rollout.",
+      "informationState": "BRAINSTORM",
+      "authorityClass": "INFERENCE",
+      "confidence": 60,
+      "lastVerifiedAt": "2026-08-17T00:00:00.000Z"
+    },
+    {
+      "projectSlug": "groomed-gent",
+      "key": "ggc.legacy-sanctum-name-conflict",
+      "title": "Legacy Sanctum naming remains unresolved",
+      "content": "Legacy Sanctum has referred to a supplement/performance line, a member app, and a physical destination. The final product architecture is unresolved and must not be silently inferred.",
+      "informationState": "DISPUTED",
+      "authorityClass": "VALIDATED_KNOWLEDGE",
+      "confidence": 90,
+      "lastVerifiedAt": "2026-08-17T00:00:00.000Z"
+    },
+    {
+      "projectSlug": "gent-logistics",
+      "key": "gent.business-model",
+      "title": "Gent Logistics business model",
+      "content": "Gent Logistics is being built as a premium local and regional B2B courier and logistics company, not a consumer gig-delivery marketplace or freight brokerage.",
+      "informationState": "CURRENT_FACT",
+      "authorityClass": "VALIDATED_KNOWLEDGE",
+      "confidence": 85,
+      "lastVerifiedAt": "2026-08-17T00:00:00.000Z"
+    },
+    {
+      "projectSlug": "gent-logistics",
+      "key": "gent.dispatch-priority",
+      "title": "Gent Dispatch software priority",
+      "content": "Later explicit founder direction made Gent Dispatch the first major software product; website, Command, driver app, and client portal do not outrank that decision without a newer explicit decision.",
+      "informationState": "DECISION",
+      "authorityClass": "EXPLICIT_DECISION",
+      "confidence": 95,
+      "lastVerifiedAt": "2026-08-17T00:00:00.000Z"
+    },
+    {
+      "projectSlug": "gent-logistics",
+      "key": "gent.future-network",
+      "title": "Broader logistics network",
+      "content": "Expansion into additional industries, markets, logistics software, deeper automation, APIs, AI, and a broader logistics network remains exploratory future context.",
+      "informationState": "BRAINSTORM",
+      "authorityClass": "INFERENCE",
+      "confidence": 55,
+      "lastVerifiedAt": "2026-08-17T00:00:00.000Z"
+    }
+  ]
+}

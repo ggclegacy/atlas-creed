@@ -132,6 +132,46 @@ test("authenticated settings, PWA, and security headers are present", async ({
   );
 });
 
+test("owner initializes F1 and inspects the compiled constitutional trace", async ({
+  context,
+  page,
+  isMobile,
+}) => {
+  test.skip(
+    isMobile,
+    "the protected bootstrap runs once for the shared fixture",
+  );
+  await authenticateOwner(context);
+  await page.goto("/brain");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Brain" }),
+  ).toBeVisible();
+  const initialization = page.getByLabel("INITIALIZE ATLAS CONSTITUTION 1.0");
+  if (await initialization.isVisible()) {
+    await initialization.fill("INITIALIZE ATLAS CONSTITUTION 1.0");
+    await page
+      .getByRole("button", { name: "Initialize constitutional foundation" })
+      .click();
+  }
+  await expect(
+    page.getByText("atlas-001: The Creator", { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByText(/Long-term governed memory/)).toBeVisible();
+
+  await page.goto("/");
+  await send(page, "What is the current Gent Dispatch software priority?");
+  await expect(
+    page.getByText(/Atlas is live\. Context messages:/),
+  ).toBeVisible();
+
+  await page.goto("/brain");
+  await expect(page.getByText("openai / gpt-5.6-sol").first()).toBeVisible();
+  await expect(page.getByText(/Gent Dispatch software priority/)).toBeVisible();
+  await expect(
+    page.getByText(/Included · Gent Dispatch software priority/),
+  ).toBeVisible();
+});
+
 test("mobile conversation controls fit and remain thumb sized", async ({
   context,
   page,

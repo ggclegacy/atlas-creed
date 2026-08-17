@@ -1,10 +1,6 @@
 import "server-only";
 
 import {
-  ATLAS_BEHAVIORAL_STANDARDS,
-  ATLAS_IDENTITY,
-} from "@/lib/atlas/identity";
-import {
   beginTurn,
   checkpointAssistant,
   finalizeTurn,
@@ -16,7 +12,11 @@ import {
   encodeStreamEvent,
   type AtlasStreamEventInput,
 } from "@/lib/conversation/stream";
-import { assembleContext } from "@/lib/context/assemble";
+import {
+  compileConstitutionalContext,
+  markContextTraceUsed,
+  type CompiledConstitutionalContext,
+} from "@/lib/context/compiler";
 import type {
   AtlasFinishReason,
   AtlasModel,
@@ -178,6 +178,7 @@ export async function executeTurn(
   let lastCheckpointAt = startedAt;
   let lastCheckpointLength = 0;
   let keepalive: ReturnType<typeof setInterval> | undefined;
+  let compiledContext: CompiledConstitutionalContext | null = null;
 
   try {
     await markTurnStreaming(input.ownerId, turn.assistantId);
@@ -188,15 +189,19 @@ export async function executeTurn(
       turn.assistantId,
       input.clientTurnId,
     );
-    const context = assembleContext({
-      identity: ATLAS_IDENTITY,
-      behavioralStandards: ATLAS_BEHAVIORAL_STANDARDS,
+    compiledContext = await compileConstitutionalContext({
+      ownerId: input.ownerId,
+      conversationId: turn.conversationId,
+      assistantMessageId: turn.assistantId,
+      usageId: operationId,
+      userText: input.text,
       conversationHistory: history,
-      currentUserMessage: input.text,
-      availableTools: [],
-      contextBudget: { maxInputTokens: 30_000, expectedOutputTokens: 4_096 },
+      modelProvider: input.model.provider,
+      model: input.model.modelId,
+      maxInputTokens: 30_000,
+      expectedOutputTokens: 4_096,
     });
-    if (context.estimatedInputTokens > 30_000) {
+    if (compiledContext.request.estimatedInputTokens > 30_000) {
       throw new AtlasModelError(
         "invalid_request",
         "The current message exceeds the context policy.",
@@ -204,11 +209,15 @@ export async function executeTurn(
       );
     }
     emit({ type: "assistant.status", status: "thinking" });
+    await markContextTraceUsed(input.ownerId, compiledContext.traceId);
     keepalive = setInterval(
       () => emit({ type: "stream.keepalive" }),
       KEEPALIVE_INTERVAL_MS,
     );
-    for await (const event of input.model.stream(context, input.signal)) {
+    for await (const event of input.model.stream(
+      compiledContext.request,
+      input.signal,
+    )) {
       if (event.type === "generation_started") {
         requestId = event.requestId;
         responseId = event.responseId;
@@ -284,6 +293,12 @@ export async function executeTurn(
       cachedInputTokens: usage?.cachedInputTokens ?? null,
       outputTokens: usage?.outputTokens ?? null,
       reasoningTokens: usage?.reasoningTokens ?? null,
+      contextTraceId: compiledContext.traceId,
+      contextSize: compiledContext.request.estimatedInputTokens,
+      retrievedItemCount: compiledContext.selections.filter(
+        (selection) => selection.included,
+      ).length,
+      taskCategory: compiledContext.taskCategory,
       persisted: true,
     });
     emit({ type: "assistant.completed", finishReason, usage });
@@ -342,6 +357,12 @@ export async function executeTurn(
         cachedInputTokens: usage?.cachedInputTokens ?? null,
         outputTokens: usage?.outputTokens ?? null,
         reasoningTokens: usage?.reasoningTokens ?? null,
+        contextTraceId: compiledContext?.traceId ?? null,
+        contextSize: compiledContext?.request.estimatedInputTokens ?? null,
+        retrievedItemCount:
+          compiledContext?.selections.filter((selection) => selection.included)
+            .length ?? null,
+        taskCategory: compiledContext?.taskCategory ?? null,
         errorCode: error.code,
         diagnosticCode: error.diagnosticCode,
         persisted: true,
