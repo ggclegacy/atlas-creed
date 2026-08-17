@@ -7,22 +7,29 @@ import { describe, expect, it } from "vitest";
 import {
   conversations,
   messages,
+  modelUsage,
   owners,
   systemEvents,
 } from "../../lib/db/schema";
 
 const ROOT = path.resolve(import.meta.dirname, "../..");
 
-describe("Phase 1 database schema", () => {
-  it("contains only the approved domain tables plus Auth.js adapter storage", () => {
+describe("Phase 2 database schema", () => {
+  it("contains the approved conversation and usage domain", () => {
     expect(
-      [owners, conversations, messages, systemEvents].map(
+      [owners, conversations, messages, modelUsage, systemEvents].map(
         (table) => getTableConfig(table).name,
       ),
-    ).toEqual(["owners", "conversations", "messages", "system_events"]);
+    ).toEqual([
+      "owners",
+      "conversations",
+      "messages",
+      "model_usage",
+      "system_events",
+    ]);
   });
 
-  it.each([conversations, messages, systemEvents])(
+  it.each([conversations, messages, modelUsage, systemEvents])(
     "$name carries owner_id from the first migration",
     (table) => {
       expect(
@@ -42,5 +49,23 @@ describe("Phase 1 database schema", () => {
     expect(migration).toContain('"content" jsonb NOT NULL');
     expect(migration).toContain('CREATE TABLE "auth_sessions"');
     expect(migration).toContain('CREATE TABLE "auth_verification_tokens"');
+  });
+
+  it("adds lifecycle, idempotency, and raw usage constraints additively", async () => {
+    const migration = await readFile(
+      path.join(ROOT, "lib/db/migrations/0001_dear_iron_monger.sql"),
+      "utf8",
+    );
+    expect(migration).toContain('CREATE TABLE "model_usage"');
+    expect(migration).toContain('"client_turn_id" uuid');
+    expect(migration).toContain(
+      'CREATE UNIQUE INDEX "messages_conversation_turn_role_unique"',
+    );
+    expect(migration).toContain(
+      "Phase 2 migration found an unsupported messages.content shape",
+    );
+    expect(migration).toContain(
+      'UPDATE "conversations" SET "last_message_at" = "updated_at"',
+    );
   });
 });

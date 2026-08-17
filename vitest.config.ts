@@ -9,11 +9,11 @@ import { fileURLToPath } from "node:url";
 export default defineConfig({
   test: {
     environment: "node",
-    include: ["tests/**/*.test.ts"],
+    include: ["tests/**/*.test.ts", "lib/model/**/*.test.ts"],
     // Architecture guards invoke ESLint with full type information. A cold
     // project-service start can exceed Vitest's 5s default on CI or constrained
     // machines even though the assertion itself is deterministic.
-    testTimeout: 15_000,
+    testTimeout: 30_000,
     // Playwright specs live in tests/e2e and are run by `pnpm test:e2e`.
     exclude: ["tests/e2e/**", "node_modules/**", ".next/**"],
     reporters: ["default"],

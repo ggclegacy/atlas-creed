@@ -1,7 +1,7 @@
 import "server-only";
 
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 
 import { getServerEnv } from "@/lib/env/server";
 
@@ -16,13 +16,18 @@ function createDatabase() {
     ...(env.VERCEL_ENV ? { vercelEnvironment: env.VERCEL_ENV } : {}),
   });
 
-  const sql = neon(env.DATABASE_URL);
-  return drizzle({ client: sql, schema });
+  const client = postgres(env.DATABASE_URL, {
+    connect_timeout: 10,
+    idle_timeout: 10,
+    max: 4,
+    prepare: false,
+  });
+  return drizzle(client, { schema });
 }
 
 let database: ReturnType<typeof createDatabase> | undefined;
 
-/** Lazily creates the Neon HTTP client; it opens no persistent pool in Vercel functions. */
+/** Lazily creates the transaction-capable Postgres pool. */
 export function getDatabase(): ReturnType<typeof createDatabase> {
   database ??= createDatabase();
   return database;

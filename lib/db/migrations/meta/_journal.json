@@ -8,6 +8,13 @@
       "when": 1786935383289,
       "tag": "0000_lucky_iceman",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1786948306904,
+      "tag": "0001_dear_iron_monger",
+      "breakpoints": true
     }
   ]
 }
