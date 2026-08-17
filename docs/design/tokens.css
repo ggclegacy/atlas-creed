@@ -1,0 +1,228 @@
+/* ==========================================================================
+   ATLAS CREED — DESIGN TOKENS
+   Status: Proposed v0.1 — pending owner approval
+   Canon: docs/canon/ATLAS-CREED-BIBLE.md §11–§14
+
+   Every value here is measured, not eyeballed. Contrast ratios are WCAG 2.1
+   against the surface named in the comment. Do not add a token without
+   measuring it — see docs/design/DESIGN-SYSTEM.md for the governance rules.
+   ========================================================================== */
+
+:root {
+  /* ------------------------------------------------------------------------
+     OBSIDIAN — the environment (§11)
+     Not flat black. A violet-cast neutral ramp; hue ~250°, saturation 8–14%.
+     Dimensionality comes from smooth luminance stepping, not from glow.
+     Steps are perceptually even: each rise is ~1.4x the previous delta.
+     ---------------------------------------------------------------------- */
+  --obsidian-950: #09090D;  /* L 0.0028 — void, app ground, behind everything */
+  --obsidian-900: #0E0E13;  /* L 0.0045 — base surface, default canvas       */
+  --obsidian-850: #14141B;  /* L 0.0073 — raised: rails, headers, wells      */
+  --obsidian-800: #1A1A23;  /* L 0.0108 — card, panel, the workhorse surface */
+  --obsidian-750: #21212C;  /* L 0.0159 — overlay: popover, menu, tooltip    */
+  --obsidian-700: #2A2A37;  /* L 0.0242 — structural border                  */
+  --obsidian-650: #353544;  /* L 0.0381 — interactive border, hover edge     */
+
+  /* Hairlines. Prefer these over solid borders on elevated surfaces. */
+  --hairline:        rgba(255, 255, 255, 0.06);
+  --hairline-strong: rgba(255, 255, 255, 0.10);
+  --hairline-top:    rgba(255, 255, 255, 0.04); /* inset top edge = depth */
+
+  /* ------------------------------------------------------------------------
+     GOLD — authority, hierarchy, focus, signature moments (§11)
+     Brass-leaning and deliberately desaturated. Saturated yellow (#FFD700,
+     #D4AF37) is the "cheap metallic excess" the canon prohibits.
+     Gold is a scarce resource. See the 5% rule in DESIGN-SYSTEM.md.
+     ---------------------------------------------------------------------- */
+  --gold-100: #F5EDD8;  /* 14.79:1 on 800 — highest emphasis, rare          */
+  --gold-200: #EBDCB4;  /* 12.69:1 on 800                                    */
+  --gold-300: #DEC488;  /* 10.16:1 on 800 — gold text and icons              */
+  --gold-400: #CBAA5E;  /*  7.77:1 on 800 — primary interactive, focus ring  */
+  --gold-500: #B4913F;  /*  5.81:1 on 800 — fills. Obsidian text only.       */
+  --gold-600: #8F7130;  /* pressed / active                                  */
+  --gold-700: #6A5323;  /* deep edge, gold-on-gold division                  */
+  --gold-900: #2A2113;  /* tinted wash — use at low opacity, never flat fill */
+
+  --gold-tint:   rgba(203, 170, 94, 0.12); /* selected-row, active-nav wash  */
+  --gold-border: rgba(203, 170, 94, 0.32); /* chip and outline borders       */
+
+  /* ------------------------------------------------------------------------
+     IMPERIAL PURPLE — cognition, ambient depth, agent differentiation (§11)
+     Hard saturation ceiling of 46%. Reference: "gamer violet" #8B5CF6 sits at
+     89.5% and is exactly what the canon prohibits.
+     Purple is never a primary action and never body text.
+     ---------------------------------------------------------------------- */
+  --purple-300: #A492CE;  /* 6.23:1 on 800 — max text purple, sparing use    */
+  --purple-400: #8467B8;  /* 3.79:1 on 800 — state indicator, non-text only  */
+  --purple-500: #63459B;  /* 2.35:1 — FILL ONLY. Never text at any size.     */
+  --purple-600: #4F2F7C;  /* core imperial purple                            */
+  --purple-700: #3D2461;
+  --purple-800: #2C1A47;
+  --purple-900: #1B1030;  /* ambient wash — the atmospheric register         */
+
+  --purple-tint: rgba(132, 103, 184, 0.14);
+
+  /* ------------------------------------------------------------------------
+     TEXT
+     Never pure white. #FFF on obsidian is harsh and reads as unconsidered.
+     ---------------------------------------------------------------------- */
+  --text-primary:   #F2F1F5;  /* 15.36:1 on 800 — AAA */
+  --text-secondary: #A8A7B4;  /*  7.28:1 on 800 — AAA */
+  --text-tertiary:  #6E6D7C;  /*  3.41:1 on 800 — large text and metadata only */
+  --text-disabled:  #565565;  /*  2.37:1 — WCAG-exempt (disabled), never for
+                                 information the owner needs to read */
+  --text-on-gold:   #09090D;  /*  6.68:1 on gold-500. White fails at 2.97:1. */
+
+  /* ------------------------------------------------------------------------
+     SIGNAL — status (§28, §29: state must be honest and legible)
+     Only three hues exist. There is no amber: every usable amber sits within
+     21° of gold-400 and reads as brand chrome rather than as a warning.
+     Caution is only 11.1° from critical, so COLOR ALONE CANNOT SEPARATE THEM.
+     Both require an icon and a text label. This is enforced, not advisory.
+     ---------------------------------------------------------------------- */
+  --signal-positive: #6FBF9A;  /* 7.89:1 — hue 152°                          */
+  --signal-caution:  #CB8972;  /* 6.05:1 — hue 15.5°, 26.3° clear of gold    */
+  --signal-critical: #E07A72;  /* 5.92:1 — hue 4.4°                          */
+  --signal-atlas:    #8467B8;  /* purple — Atlas is thinking or acting       */
+  --signal-neutral:  #6E6D7C;  /* idle, unknown, not-yet-run                 */
+
+  /* Status chips use a tint + border + full-strength text. Solid semantic
+     fills fail contrast in both directions — do not use them. */
+  --tint-positive: rgba(111, 191, 154, 0.14);
+  --tint-caution:  rgba(203, 137, 114, 0.14);
+  --tint-critical: rgba(224, 122, 114, 0.14);
+  --tint-atlas:    rgba(132, 103, 184, 0.14);
+
+  /* ------------------------------------------------------------------------
+     TYPOGRAPHY (§12: strong typography, deliberate hierarchy)
+     Typeface selection is an OPEN DECISION — see DESIGN-SYSTEM.md.
+     The scale, weights, and tracking below are the durable part and hold
+     regardless of which faces are licensed.
+     ---------------------------------------------------------------------- */
+  --font-display: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body:    system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:    ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+
+  /* size / line-height / tracking / weight */
+  --type-display-lg: 600 2.75rem/1.09 var(--font-display);   /* 44px, -0.021em */
+  --type-display:    600 2.125rem/1.18 var(--font-display);  /* 34px, -0.018em */
+  --type-h1:         600 1.625rem/1.23 var(--font-display);  /* 26px, -0.014em */
+  --type-h2:         600 1.25rem/1.30 var(--font-display);   /* 20px, -0.010em */
+  --type-h3:         600 1.0625rem/1.41 var(--font-display); /* 17px, -0.006em */
+  --type-body-lg:    400 1rem/1.63 var(--font-body);         /* 16px */
+  --type-body:       400 0.9375rem/1.60 var(--font-body);    /* 15px */
+  --type-body-sm:    400 0.84375rem/1.48 var(--font-body);   /* 13.5px */
+  --type-caption:    400 0.75rem/1.33 var(--font-body);      /* 12px */
+  --type-label:      600 0.6875rem/1.27 var(--font-mono);    /* 11px, +0.09em, UPPER */
+  --type-data:       450 0.8125rem/1.38 var(--font-mono);    /* 13px, tabular */
+
+  --track-display: -0.021em;
+  --track-h1:      -0.014em;
+  --track-h2:      -0.010em;
+  --track-body:     0;
+  --track-label:    0.09em;   /* the instrument register */
+
+  --measure-read: 68ch;  /* running prose */
+  --measure-ui:   46ch;  /* UI copy, descriptions, empty states */
+
+  /* ------------------------------------------------------------------------
+     SPACE — 4px base grid (§12: generous negative space)
+     ---------------------------------------------------------------------- */
+  --space-1:  0.25rem;   /*  4px */
+  --space-2:  0.5rem;    /*  8px */
+  --space-3:  0.75rem;   /* 12px */
+  --space-4:  1rem;      /* 16px */
+  --space-5:  1.5rem;    /* 24px */
+  --space-6:  2rem;      /* 32px */
+  --space-7:  3rem;      /* 48px */
+  --space-8:  4rem;      /* 64px */
+  --space-9:  6rem;      /* 96px */
+  --space-10: 8rem;      /* 128px */
+
+  /* ------------------------------------------------------------------------
+     GEOMETRY (§12: clean geometry)
+     Tight radii read as instrument and industrial. Generous radii read as
+     consumer app. Nothing in Atlas exceeds 14px, and pill shapes are
+     prohibited except on avatars — a fully rounded UI is the single fastest
+     way to make this system look like every other product.
+     ---------------------------------------------------------------------- */
+  --radius-xs: 2px;   /* chips, tags, status markers */
+  --radius-sm: 4px;   /* inline elements, small controls */
+  --radius-md: 6px;   /* buttons, inputs, selects — the control radius */
+  --radius-lg: 10px;  /* cards, panels — the surface radius */
+  --radius-xl: 14px;  /* modals, sheets. Maximum permitted value. */
+  --radius-avatar: 50%;
+
+  --border-width: 1px;
+  --focus-width: 2px;
+  --focus-offset: 2px;
+
+  /* ------------------------------------------------------------------------
+     ELEVATION (§12 subtle depth, §13 no glowing borders)
+     Depth is carried by SURFACE LUMINANCE FIRST, shadow second, glow never.
+     If a raised element is not also a lighter surface, it will not read as
+     raised no matter how much shadow is applied.
+     ---------------------------------------------------------------------- */
+  --elev-0: none;
+  --elev-1: 0 1px 2px rgba(0, 0, 0, 0.40);
+  --elev-2: 0 4px 12px -2px rgba(0, 0, 0, 0.50);
+  --elev-3: 0 12px 32px -4px rgba(0, 0, 0, 0.60);
+  --elev-4: 0 24px 64px -8px rgba(0, 0, 0, 0.70);
+  --elev-inset-top: inset 0 1px 0 var(--hairline-top);
+
+  /* ------------------------------------------------------------------------
+     MOTION (§14: controlled, weighted, smooth, deliberate)
+     No spring. No bounce. No overshoot on chrome. A premium machine moves
+     with purpose — nothing animates simply because it can.
+     ---------------------------------------------------------------------- */
+  --dur-instant:    90ms;   /* state echo: press, check, toggle           */
+  --dur-quick:     140ms;   /* hover, focus, small reveals                */
+  --dur-base:      220ms;   /* the default: most transitions             */
+  --dur-considered: 340ms;  /* content arriving, panels opening          */
+  --dur-deliberate: 520ms;  /* mode and context transitions              */
+  --dur-ambient:   2400ms;  /* thinking, background presence             */
+
+  --ease-standard: cubic-bezier(0.40, 0.00, 0.20, 1.00);
+  --ease-entrance: cubic-bezier(0.16, 1.00, 0.30, 1.00); /* weighted expo-out */
+  --ease-exit:     cubic-bezier(0.40, 0.00, 1.00, 1.00);
+  --ease-emphasis: cubic-bezier(0.65, 0.00, 0.35, 1.00);
+  /* Determinate progress uses LINEAR. An eased progress bar misrepresents
+     elapsed time, which is a §29 violation dressed up as polish. */
+  --ease-progress: linear;
+
+  --stagger: 40ms;  /* between siblings in an arrival sequence */
+
+  /* ------------------------------------------------------------------------
+     LAYERS
+     ---------------------------------------------------------------------- */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 100;
+  --z-overlay: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+}
+
+/* Reduced motion is not optional (§14, accessibility).
+   Ambient and decorative motion stops entirely; functional transitions
+   collapse to near-instant rather than disappearing, so state changes
+   remain perceivable. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-instant: 1ms;
+    --dur-quick: 1ms;
+    --dur-base: 1ms;
+    --dur-considered: 1ms;
+    --dur-deliberate: 1ms;
+    --dur-ambient: 1ms;
+  }
+}
+
+/* Focus is always gold, always visible, never removed (§12 deliberate
+   hierarchy — focus IS hierarchy). gold-400 clears 7.77:1 on every
+   surface in the ramp. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: var(--focus-width) solid var(--gold-400);
+  outline-offset: var(--focus-offset);
+  border-radius: var(--radius-sm);
+}

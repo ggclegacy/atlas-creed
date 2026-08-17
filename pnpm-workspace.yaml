@@ -1,0 +1,12 @@
+# pnpm settings. As of pnpm 11 these live here rather than in package.json.
+#
+# pnpm blocks dependency build scripts by default — a good supply-chain default,
+# since a postinstall script runs arbitrary code on every developer machine and
+# in CI. The map below is an explicit, auditable allowlist.
+#
+# Add a package here only after deciding it genuinely needs to run code at
+# install time, and record why.
+allowBuilds:
+  # Native module resolver used by eslint-plugin-import-x, which
+  # eslint-config-next depends on. Linting fails without its native binding.
+  unrs-resolver: true

@@ -1,0 +1,146 @@
+/* ==========================================================================
+   ATLAS CREED — PRIMITIVE TOKENS
+   ⚠️  PROVISIONAL. The visual system is NOT ratified.
+
+   This layer holds raw values ONLY. Nothing in the application may reference a
+   primitive directly — components consume the semantic layer (semantic.css).
+
+   That indirection is the entire point of Phase 0's token work: when the visual
+   system is ratified, the change happens in THIS FILE and nowhere else. No
+   component edits, no find-and-replace, no visual regression hunt.
+
+   Values below are carried over from the measured design exploration in
+   docs/design/. They are defensible starting points, not decisions.
+
+   Open, per Build Plan §12 "Decisions requiring owner approval":
+     · typeface selection (system stacks used as placeholders below)
+     · dark-only commitment vs. a light theme
+     · the gold usage ratio
+     · whether the purple accent ships in V1 at all
+   ========================================================================== */
+
+:root {
+  /* ── Obsidian: violet-cast neutral ramp ────────────────────────────────
+     Not flat black. Dimensionality comes from smooth luminance stepping. */
+  --p-obsidian-950: #09090d;
+  --p-obsidian-900: #0e0e13;
+  --p-obsidian-850: #14141b;
+  --p-obsidian-800: #1a1a23;
+  --p-obsidian-750: #21212c;
+  --p-obsidian-700: #2a2a37;
+  --p-obsidian-650: #353544;
+
+  /* ── Gold: authority, hierarchy, focus ─────────────────────────────────
+     Brass-leaning and deliberately desaturated. Saturated yellow reads as
+     ornament rather than instrumentation. */
+  --p-gold-100: #f5edd8;
+  --p-gold-200: #ebdcb4;
+  --p-gold-300: #dec488;
+  --p-gold-400: #cbaa5e;
+  --p-gold-500: #b4913f;
+  --p-gold-600: #8f7130;
+  --p-gold-700: #6a5323;
+  --p-gold-900: #2a2113;
+
+  /* ── Imperial purple: cognition, ambient depth ─────────────────────────
+     Saturation ceiling ~46%. Higher saturation reads as consumer-tech violet. */
+  --p-purple-300: #a492ce;
+  --p-purple-400: #8467b8;
+  --p-purple-500: #63459b;
+  --p-purple-600: #4f2f7c;
+  --p-purple-800: #2c1a47;
+  --p-purple-900: #1b1030;
+
+  /* ── Text ramp ─────────────────────────────────────────────────────────
+     Never pure white; #fff on obsidian is harsh. */
+  --p-text-100: #f2f1f5;
+  --p-text-200: #a8a7b4;
+  --p-text-300: #6e6d7c;
+  --p-text-400: #565565;
+
+  /* ── Signal ────────────────────────────────────────────────────────────
+     No amber: every usable amber sits too close to gold-400 to read as a
+     warning rather than as brand chrome. Caution is pushed to ~15° hue. */
+  --p-signal-positive: #6fbf9a;
+  --p-signal-caution: #cb8972;
+  --p-signal-critical: #e07a72;
+
+  /* ── Alpha overlays ────────────────────────────────────────────────────*/
+  --p-alpha-white-04: rgb(255 255 255 / 4%);
+  --p-alpha-white-06: rgb(255 255 255 / 6%);
+  --p-alpha-white-10: rgb(255 255 255 / 10%);
+  --p-alpha-gold-12: rgb(203 170 94 / 12%);
+  --p-alpha-gold-32: rgb(203 170 94 / 32%);
+  --p-alpha-purple-14: rgb(132 103 184 / 14%);
+
+  /* ── Typeface stacks ───────────────────────────────────────────────────
+     PLACEHOLDER. No typeface is licensed or chosen. System stacks are used so
+     nothing is locked in; the scale and rhythm below are the durable part. */
+  --p-font-sans:
+    system-ui, -apple-system, "Segoe UI", roboto, helvetica, arial, sans-serif;
+  --p-font-mono: ui-monospace, "SF Mono", "Cascadia Mono", menlo, monospace;
+
+  /* ── Type scale ────────────────────────────────────────────────────────*/
+  --p-size-11: 0.6875rem;
+  --p-size-12: 0.75rem;
+  --p-size-14: 0.875rem;
+  --p-size-15: 0.9375rem;
+  --p-size-17: 1.0625rem;
+  --p-size-20: 1.25rem;
+  --p-size-26: 1.625rem;
+  --p-size-34: 2.125rem;
+  --p-size-44: 2.75rem;
+
+  --p-tracking-tight: -0.021em;
+  --p-tracking-snug: -0.014em;
+  --p-tracking-normal: 0;
+  --p-tracking-wide: 0.09em;
+
+  --p-leading-tight: 1.15;
+  --p-leading-snug: 1.3;
+  --p-leading-normal: 1.5;
+  --p-leading-relaxed: 1.6;
+
+  /* ── Space: 4px base grid ──────────────────────────────────────────────*/
+  --p-space-1: 0.25rem;
+  --p-space-2: 0.5rem;
+  --p-space-3: 0.75rem;
+  --p-space-4: 1rem;
+  --p-space-5: 1.5rem;
+  --p-space-6: 2rem;
+  --p-space-7: 3rem;
+  --p-space-8: 4rem;
+  --p-space-9: 6rem;
+
+  /* ── Radii ─────────────────────────────────────────────────────────────
+     Tight radii read as instrument; generous radii read as consumer app. */
+  --p-radius-xs: 2px;
+  --p-radius-sm: 4px;
+  --p-radius-md: 6px;
+  --p-radius-lg: 10px;
+  --p-radius-xl: 14px;
+
+  /* ── Shadow ────────────────────────────────────────────────────────────
+     Depth is luminance first, shadow second, glow never. */
+  --p-shadow-1: 0 1px 2px rgb(0 0 0 / 40%);
+  --p-shadow-2: 0 4px 12px -2px rgb(0 0 0 / 50%);
+  --p-shadow-3: 0 12px 32px -4px rgb(0 0 0 / 60%);
+  --p-shadow-4: 0 24px 64px -8px rgb(0 0 0 / 70%);
+
+  /* ── Motion ────────────────────────────────────────────────────────────
+     No spring, no bounce, no overshoot on chrome. */
+  --p-duration-instant: 90ms;
+  --p-duration-quick: 140ms;
+  --p-duration-base: 220ms;
+  --p-duration-considered: 340ms;
+  --p-duration-deliberate: 520ms;
+  --p-duration-ambient: 2400ms;
+
+  --p-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --p-ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --p-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --p-ease-emphasis: cubic-bezier(0.65, 0, 0.35, 1);
+  /* Determinate progress is linear: an eased progress bar misrepresents
+     elapsed time, which is a truthfulness problem dressed as polish. */
+  --p-ease-progress: linear;
+}

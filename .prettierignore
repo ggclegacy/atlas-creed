@@ -1,0 +1,21 @@
+node_modules/
+.next/
+out/
+build/
+coverage/
+test-results/
+playwright-report/
+pnpm-lock.yaml
+next-env.d.ts
+
+# Next.js rewrites tsconfig.json on every build (it sets `jsx` and injects
+# generated type paths). Formatting it just creates a diff that the next build
+# undoes. Its contents are still reviewed — strictness flags are load-bearing.
+tsconfig.json
+
+# Authored canon and product documents.
+# These are approved, hand-formatted source documents — reformatting them would
+# produce large diffs against material the owner has ratified. Content is
+# reviewed by a human, not by a formatter.
+docs/
+CLAUDE.md

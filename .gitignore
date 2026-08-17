@@ -1,0 +1,46 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# next.js
+.next/
+out/
+next-env.d.ts
+
+# production
+build/
+dist/
+
+# testing
+coverage/
+test-results/
+playwright-report/
+blob-report/
+.playwright/
+
+# transient files written by the architecture guard tests
+**/__probe__/
+
+# environment — NEVER commit real secrets.
+# .env.example is the only env file that belongs in version control.
+.env
+.env.*
+!.env.example
+
+# vercel
+.vercel/
+
+# typescript
+*.tsbuildinfo
+
+# editor / os
+.DS_Store
+*.swp
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*

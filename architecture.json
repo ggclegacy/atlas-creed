@@ -1,0 +1,49 @@
+{
+  "$comment": [
+    "Atlas Creed — architecture boundary definitions.",
+    "",
+    "Single source of truth, consumed by BOTH eslint.config.mjs (which enforces",
+    "the rules) and tests/arch/*.test.ts (which prove the enforcement works).",
+    "One definition means the tests cannot drift from the real config and",
+    "quietly start proving nothing.",
+    "",
+    "JSON because an .mjs ESLint config and .ts tests must both import it",
+    "without a declaration file.",
+    "",
+    "See Build Plan §7 (model adapter boundary) and §14 (secrets)."
+  ],
+
+  "providerSdkPatterns": [
+    "@anthropic-ai/*",
+    "@anthropic-ai/**",
+    "openai",
+    "openai/**",
+    "@google/generative-ai",
+    "@google/genai",
+    "@mistralai/**",
+    "cohere-ai",
+    "ollama",
+    "ai",
+    "@ai-sdk/**",
+    "langchain",
+    "langchain/**",
+    "@langchain/**"
+  ],
+
+  "modelBoundaryAllowlist": ["lib/model/**"],
+
+  "providerSdkMessage": "Provider SDKs may only be imported inside lib/model/. Use the AtlasModel interface instead (Build Plan §7). Adding a provider means adding an adapter, not scattering SDK calls through the codebase.",
+
+  "processEnvSelector": "MemberExpression[object.name='process'][property.name='env']",
+
+  "processEnvMessage": "Import validated config from lib/env/ instead of reading process.env directly (Build Plan §14). This keeps every variable schema-checked and keeps server secrets out of client bundles.",
+
+  "envBoundaryAllowlist": [
+    "lib/env/**",
+    "*.config.ts",
+    "*.config.mjs",
+    "tests/**"
+  ],
+
+  "secretNamePattern": "(SECRET|_KEY|^KEY_|APIKEY|API_KEY|TOKEN|PASSWORD|PASSWD|CREDENTIAL|PRIVATE|DSN|CONNECTION_STRING|DATABASE_URL|SALT|SIGNING)"
+}

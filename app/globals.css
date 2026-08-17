@@ -1,0 +1,88 @@
+@import "tailwindcss";
+@import "../styles/tokens/primitives.css";
+@import "../styles/tokens/semantic.css";
+
+/* ==========================================================================
+   Tailwind bridge.
+
+   The token files above are framework-agnostic CSS custom properties — they
+   would work with no build tooling at all. This block is the ONLY place that
+   couples them to Tailwind.
+
+   `@theme inline` makes generated utilities reference the custom property
+   rather than copying its value, so re-pointing a semantic token updates every
+   utility at runtime.
+
+   Only semantic tokens are exposed. Primitives are deliberately absent, so a
+   `bg-obsidian-850` utility cannot exist and components cannot reach past the
+   semantic layer.
+   ========================================================================== */
+@theme inline {
+  --color-surface-void: var(--surface-void);
+  --color-surface-base: var(--surface-base);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-card: var(--surface-card);
+  --color-surface-overlay: var(--surface-overlay);
+
+  --color-border-hairline: var(--border-hairline);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-default: var(--border-default);
+  --color-border-interactive: var(--border-interactive);
+  --color-border-emphasis: var(--border-emphasis);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-disabled: var(--text-disabled);
+  --color-text-accent: var(--text-accent);
+  --color-text-on-accent: var(--text-on-accent);
+
+  --color-accent-authority: var(--accent-authority);
+  --color-accent-authority-strong: var(--accent-authority-strong);
+  --color-accent-cognition: var(--accent-cognition);
+
+  --color-signal-positive: var(--signal-positive);
+  --color-signal-caution: var(--signal-caution);
+  --color-signal-critical: var(--signal-critical);
+  --color-signal-thinking: var(--signal-thinking);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+
+  --radius-chip: var(--radius-chip);
+  --radius-inline: var(--radius-inline);
+  --radius-control: var(--radius-control);
+  --radius-surface: var(--radius-surface);
+  --radius-modal: var(--radius-modal);
+
+  --shadow-low: var(--elevation-low);
+  --shadow-card: var(--elevation-card);
+  --shadow-overlay: var(--elevation-overlay);
+  --shadow-modal: var(--elevation-modal);
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────── */
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  /* The viewer paints its own ground behind the page; an unset background
+     borrows it. Always paint explicitly. */
+  background: var(--surface-void);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-size-body);
+  line-height: var(--text-leading-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Focus is hierarchy. It is always visible and never removed. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: var(--state-focus-width) solid var(--state-focus-ring);
+  outline-offset: var(--state-focus-offset);
+  border-radius: var(--radius-inline);
+}

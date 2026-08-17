@@ -1,0 +1,152 @@
+/* ==========================================================================
+   ATLAS CREED — SEMANTIC TOKENS
+
+   This is the STABLE layer. Application code references these names and only
+   these names. Each maps to a provisional primitive.
+
+   The contract:
+     · Semantic names describe ROLE, never appearance ("--surface-raised",
+       not "--obsidian-850"). A role survives a visual ratification; a colour
+       name does not.
+     · Components never reference `--p-*` primitives directly.
+     · Ratifying the visual system means re-pointing this file's right-hand
+       side. Component code does not change.
+
+   Naming is deliberately theme-neutral so a light theme — if one is ever
+   approved — is a second block here rather than a rewrite.
+   ========================================================================== */
+
+:root {
+  /* ── Surfaces: elevation is luminance first, shadow second ─────────────*/
+  --surface-void: var(--p-obsidian-950);
+  --surface-base: var(--p-obsidian-900);
+  --surface-raised: var(--p-obsidian-850);
+  --surface-card: var(--p-obsidian-800);
+  --surface-overlay: var(--p-obsidian-750);
+
+  /* ── Borders ───────────────────────────────────────────────────────────*/
+  --border-hairline: var(--p-alpha-white-06);
+  --border-subtle: var(--p-alpha-white-10);
+  --border-default: var(--p-obsidian-700);
+  --border-interactive: var(--p-obsidian-650);
+  --border-emphasis: var(--p-alpha-gold-32);
+
+  /* ── Text hierarchy ────────────────────────────────────────────────────*/
+  --text-primary: var(--p-text-100);
+  --text-secondary: var(--p-text-200);
+  --text-tertiary: var(--p-text-300);
+  --text-disabled: var(--p-text-400);
+  --text-on-accent: var(--p-obsidian-950);
+  --text-accent: var(--p-gold-300);
+
+  /* ── Accents ───────────────────────────────────────────────────────────
+     Roles, not colours: "authority" and "cognition" stay meaningful even if
+     the underlying hues change during ratification. */
+  --accent-authority: var(--p-gold-400);
+  --accent-authority-strong: var(--p-gold-500);
+  --accent-authority-muted: var(--p-alpha-gold-12);
+  --accent-cognition: var(--p-purple-400);
+  --accent-cognition-muted: var(--p-alpha-purple-14);
+  --accent-ambient: var(--p-purple-900);
+
+  /* ── Interaction states ────────────────────────────────────────────────*/
+  --state-hover: var(--p-alpha-white-04);
+  --state-active: var(--p-alpha-white-10);
+  --state-selected: var(--p-alpha-gold-12);
+  --state-focus-ring: var(--p-gold-400);
+  --state-focus-width: 2px;
+  --state-focus-offset: 2px;
+  --state-disabled-text: var(--p-text-400);
+
+  /* ── Signals ───────────────────────────────────────────────────────────
+     Caution and critical are close in hue by necessity, so colour alone must
+     never distinguish them — pair with an icon and a label. */
+  --signal-positive: var(--p-signal-positive);
+  --signal-caution: var(--p-signal-caution);
+  --signal-critical: var(--p-signal-critical);
+  --signal-thinking: var(--p-purple-400);
+  --signal-neutral: var(--p-text-300);
+
+  /* ── Typography roles ──────────────────────────────────────────────────*/
+  --font-display: var(--p-font-sans);
+  --font-body: var(--p-font-sans);
+  --font-mono: var(--p-font-mono);
+
+  --text-size-display: var(--p-size-44);
+  --text-size-title: var(--p-size-34);
+  --text-size-heading: var(--p-size-26);
+  --text-size-subheading: var(--p-size-20);
+  --text-size-lead: var(--p-size-17);
+  --text-size-body: var(--p-size-15);
+  --text-size-compact: var(--p-size-14);
+  --text-size-caption: var(--p-size-12);
+  --text-size-label: var(--p-size-11);
+
+  --text-tracking-display: var(--p-tracking-tight);
+  --text-tracking-heading: var(--p-tracking-snug);
+  --text-tracking-body: var(--p-tracking-normal);
+  --text-tracking-label: var(--p-tracking-wide);
+
+  --text-leading-display: var(--p-leading-tight);
+  --text-leading-heading: var(--p-leading-snug);
+  --text-leading-body: var(--p-leading-relaxed);
+
+  /* Reading measure — long lines are unreadable regardless of styling. */
+  --measure-prose: 68ch;
+  --measure-ui: 46ch;
+
+  /* ── Space ─────────────────────────────────────────────────────────────*/
+  --space-3xs: var(--p-space-1);
+  --space-2xs: var(--p-space-2);
+  --space-xs: var(--p-space-3);
+  --space-sm: var(--p-space-4);
+  --space-md: var(--p-space-5);
+  --space-lg: var(--p-space-6);
+  --space-xl: var(--p-space-7);
+  --space-2xl: var(--p-space-8);
+  --space-3xl: var(--p-space-9);
+
+  /* ── Radii ─────────────────────────────────────────────────────────────*/
+  --radius-chip: var(--p-radius-xs);
+  --radius-inline: var(--p-radius-sm);
+  --radius-control: var(--p-radius-md);
+  --radius-surface: var(--p-radius-lg);
+  --radius-modal: var(--p-radius-xl);
+
+  /* ── Elevation ─────────────────────────────────────────────────────────*/
+  --elevation-flush: none;
+  --elevation-low: var(--p-shadow-1);
+  --elevation-card: var(--p-shadow-2);
+  --elevation-overlay: var(--p-shadow-3);
+  --elevation-modal: var(--p-shadow-4);
+  --elevation-inset-top: inset 0 1px 0 var(--p-alpha-white-04);
+
+  /* ── Motion roles ──────────────────────────────────────────────────────
+     Named by what the motion MEANS, so the meaning survives retuning. */
+  --motion-echo: var(--p-duration-instant);
+  --motion-hover: var(--p-duration-quick);
+  --motion-transition: var(--p-duration-base);
+  --motion-arrival: var(--p-duration-considered);
+  --motion-context-shift: var(--p-duration-deliberate);
+  --motion-thinking: var(--p-duration-ambient);
+
+  --ease-default: var(--p-ease-standard);
+  --ease-enter: var(--p-ease-entrance);
+  --ease-leave: var(--p-ease-exit);
+  --ease-emphasis: var(--p-ease-emphasis);
+  --ease-progress: var(--p-ease-progress);
+}
+
+/* Reduced motion is not optional. Ambient motion stops entirely; functional
+   transitions collapse to near-instant rather than vanishing, so state changes
+   remain perceivable. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-echo: 1ms;
+    --motion-hover: 1ms;
+    --motion-transition: 1ms;
+    --motion-arrival: 1ms;
+    --motion-context-shift: 1ms;
+    --motion-thinking: 1ms;
+  }
+}
