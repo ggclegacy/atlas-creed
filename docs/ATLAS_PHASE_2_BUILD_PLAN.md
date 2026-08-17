@@ -1,9 +1,9 @@
 # ATLAS CREED
 ## Proposed Phase 2 Build Plan — Atlas Lives
 
-**Status:** Proposed for owner review; not authorized for implementation  
-**Prepared:** 2026-08-17  
-**Scope:** Phase 2 planning only  
+**Status:** Proposed for owner review; not authorized for implementation
+**Prepared:** 2026-08-17
+**Scope:** Phase 2 planning only
 **Governing documents:** `CLAUDE.md`, `docs/ATLAS_V1_BUILD_PLAN.md` Revision 3,
 `docs/ATLAS_DESIGN_SYSTEM_V1.md`, `docs/canon/ATLAS-CREED-BIBLE.md`, and
 `docs/product/V1-PRODUCT-DEFINITION.md`
