@@ -20,7 +20,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "verify": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test && pnpm build"
+    "verify": "tsc --noEmit && eslint . && prettier --check . && vitest run && next build"
   },
   "dependencies": {
     "next": "16.3.1",
