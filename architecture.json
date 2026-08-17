@@ -34,7 +34,14 @@
 
   "providerSdkMessage": "Provider SDKs may only be imported inside lib/model/. Use the AtlasModel interface instead (Build Plan §7). Adding a provider means adding an adapter, not scattering SDK calls through the codebase.",
 
-  "processEnvSelector": "MemberExpression[object.name='process'][property.name='env']",
+  "processEnvSelectors": [
+    "MemberExpression[object.name='process'][property.name='env']",
+    "MemberExpression[object.name='process'][computed=true][property.value='env']",
+    "VariableDeclarator[init.name='process'] > ObjectPattern > Property[key.name='env']",
+    "VariableDeclarator[init.name='process'] > ObjectPattern > Property[computed=true][key.value='env']",
+    "AssignmentExpression[right.name='process'] > ObjectPattern > Property[key.name='env']",
+    "AssignmentExpression[right.name='process'] > ObjectPattern > Property[computed=true][key.value='env']"
+  ],
 
   "processEnvMessage": "Import validated config from lib/env/ instead of reading process.env directly (Build Plan §14). This keeps every variable schema-checked and keeps server secrets out of client bundles.",
 

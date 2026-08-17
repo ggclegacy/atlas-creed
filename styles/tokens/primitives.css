@@ -1,22 +1,16 @@
 /* ==========================================================================
    ATLAS CREED — PRIMITIVE TOKENS
-   ⚠️  PROVISIONAL. The visual system is NOT ratified.
+   RATIFIED. These are the approved Design System V1 raw values.
 
    This layer holds raw values ONLY. Nothing in the application may reference a
    primitive directly — components consume the semantic layer (semantic.css).
 
-   That indirection is the entire point of Phase 0's token work: when the visual
-   system is ratified, the change happens in THIS FILE and nowhere else. No
-   component edits, no find-and-replace, no visual regression hunt.
+   That indirection is the entire point of Phase 0's token work: evidence-based
+   tuning happens in THIS FILE and nowhere else. Meaningful tuning is recorded;
+   components never work around the semantic layer.
 
-   Values below are carried over from the measured design exploration in
-   docs/design/. They are defensible starting points, not decisions.
-
-   Open, per Build Plan §12 "Decisions requiring owner approval":
-     · typeface selection (system stacks used as placeholders below)
-     · dark-only commitment vs. a light theme
-     · the gold usage ratio
-     · whether the purple accent ships in V1 at all
+   Values below implement the measured, ratified decisions in
+   docs/ATLAS_DESIGN_SYSTEM_V1.md.
    ========================================================================== */
 
 :root {
@@ -74,8 +68,7 @@
   --p-alpha-purple-14: rgb(132 103 184 / 14%);
 
   /* ── Typeface stacks ───────────────────────────────────────────────────
-     PLACEHOLDER. No typeface is licensed or chosen. System stacks are used so
-     nothing is locked in; the scale and rhythm below are the durable part. */
+     V1 uses the ratified system stacks. No webfont ships in V1. */
   --p-font-sans:
     system-ui, -apple-system, "Segoe UI", roboto, helvetica, arial, sans-serif;
   --p-font-mono: ui-monospace, "SF Mono", "Cascadia Mono", menlo, monospace;

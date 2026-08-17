@@ -4,6 +4,42 @@ import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
 
 import architecture from "./architecture.json" with { type: "json" };
 
+function matchesProviderSdkPattern(specifier, pattern) {
+  const wildcardIndex = pattern.indexOf("*");
+  if (wildcardIndex === -1) return specifier === pattern;
+  return specifier.startsWith(pattern.slice(0, wildcardIndex));
+}
+
+const atlasArchitecturePlugin = {
+  meta: { name: "atlas-architecture" },
+  rules: {
+    "no-dynamic-provider-imports": {
+      meta: {
+        type: "problem",
+        schema: [],
+      },
+      create(context) {
+        return {
+          ImportExpression(node) {
+            const specifier = node.source.value;
+            if (
+              typeof specifier === "string" &&
+              architecture.providerSdkPatterns.some((pattern) =>
+                matchesProviderSdkPattern(specifier, pattern),
+              )
+            ) {
+              context.report({
+                node,
+                message: architecture.providerSdkMessage,
+              });
+            }
+          },
+        };
+      },
+    },
+  },
+};
+
 export default tseslint.config(
   {
     ignores: [
@@ -38,7 +74,11 @@ export default tseslint.config(
   // Proved by tests/arch/model-boundary.test.ts
   // ───────────────────────────────────────────────────────────────────
   {
+    plugins: {
+      "atlas-architecture": atlasArchitecturePlugin,
+    },
     rules: {
+      "atlas-architecture/no-dynamic-provider-imports": "error",
       "no-restricted-imports": [
         "error",
         {
@@ -54,7 +94,10 @@ export default tseslint.config(
   },
   {
     files: architecture.modelBoundaryAllowlist,
-    rules: { "no-restricted-imports": "off" },
+    rules: {
+      "atlas-architecture/no-dynamic-provider-imports": "off",
+      "no-restricted-imports": "off",
+    },
   },
 
   // ───────────────────────────────────────────────────────────────────
@@ -65,10 +108,10 @@ export default tseslint.config(
     rules: {
       "no-restricted-syntax": [
         "error",
-        {
-          selector: architecture.processEnvSelector,
+        ...architecture.processEnvSelectors.map((selector) => ({
+          selector,
           message: architecture.processEnvMessage,
-        },
+        })),
       ],
     },
   },

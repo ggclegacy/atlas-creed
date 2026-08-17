@@ -1,7 +1,7 @@
 # ATLAS CREED
 ## Design System V1
 
-**Status:** Proposed — awaiting owner ratification
+**Status:** Ratified and approved
 **Governs:** all V1 interface work from Phase 1 onward
 **Canon:** [canon/ATLAS-CREED-BIBLE.md](canon/ATLAS-CREED-BIBLE.md) §11–§14 · [ATLAS_V1_BUILD_PLAN.md](ATLAS_V1_BUILD_PLAN.md) §16
 **Supersedes:** `docs/design/DESIGN-SYSTEM.md` (earlier exploration; values carried forward where measured)
@@ -1242,4 +1242,4 @@ icon, first-run, and composer.
 
 ---
 
-**End of Design System V1. Awaiting ratification — no Phase 1 interface work has begun.**
+**End of Design System V1. Ratified and approved for Phase 1 implementation.**

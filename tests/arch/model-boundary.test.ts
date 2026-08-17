@@ -1,11 +1,16 @@
-import { mkdir, rm, writeFile } from "node:fs/promises";
+import { rm } from "node:fs/promises";
 import path from "node:path";
 
-import { ESLint } from "eslint";
 import { afterAll, describe, expect, it } from "vitest";
 
 import architecture from "../../architecture.json";
-import { ROOT, isDisabled, isError, resolveRule } from "./eslint-config-helper";
+import {
+  ROOT,
+  isDisabled,
+  isError,
+  lintCodeAs,
+  resolveRule,
+} from "./eslint-config-helper";
 
 /**
  * Proves the model provider boundary is REAL, not aspirational.
@@ -23,24 +28,16 @@ import { ROOT, isDisabled, isError, resolveRule } from "./eslint-config-helper";
 const PROBE_DIR = path.join(ROOT, "tests/arch/__probe__");
 
 const RULE = "no-restricted-imports";
+const DYNAMIC_RULE = "atlas-architecture/no-dynamic-provider-imports";
 const PROVIDER_IMPORT = `import Anthropic from "@anthropic-ai/sdk";\nexport const client = Anthropic;\n`;
-
-/** Writes a real file (type-aware linting needs one), lints it, cleans up. */
-async function lintAs(relativePath: string, code: string) {
-  const absolute = path.join(ROOT, relativePath);
-  await mkdir(path.dirname(absolute), { recursive: true });
-  await writeFile(absolute, code, "utf8");
-  try {
-    const eslint = new ESLint({ cwd: ROOT, ignore: false });
-    const [result] = await eslint.lintFiles([absolute]);
-    return result;
-  } finally {
-    await rm(absolute, { force: true });
-  }
-}
+const DYNAMIC_PROVIDER_IMPORT = `export const loadProvider = () => import("@anthropic-ai/sdk");\n`;
 
 afterAll(async () => {
   await rm(PROBE_DIR, { recursive: true, force: true });
+  await rm(path.join(ROOT, "lib/model/__probe__"), {
+    recursive: true,
+    force: true,
+  });
 });
 
 describe("model provider boundary — configuration", () => {
@@ -62,6 +59,21 @@ describe("model provider boundary — configuration", () => {
     ).toBe(true);
   });
 
+  it("restricts dynamic provider imports outside lib/model/", async () => {
+    const entry = await resolveRule("app/some-feature.ts", DYNAMIC_RULE);
+
+    expect(
+      isError(entry),
+      `${DYNAMIC_RULE} must close the dynamic-import bypass`,
+    ).toBe(true);
+  });
+
+  it("permits dynamic provider imports inside lib/model/", async () => {
+    const entry = await resolveRule("lib/model/anthropic.ts", DYNAMIC_RULE);
+
+    expect(isDisabled(entry)).toBe(true);
+  });
+
   it("covers every provider SDK the architecture declares", () => {
     expect(architecture.providerSdkPatterns.length).toBeGreaterThan(0);
     expect(architecture.providerSdkPatterns).toContain("@anthropic-ai/*");
@@ -71,7 +83,7 @@ describe("model provider boundary — configuration", () => {
 
 describe("model provider boundary — enforcement", () => {
   it("REJECTS a real provider import from app/", async () => {
-    const result = await lintAs(
+    const result = await lintCodeAs(
       "tests/arch/__probe__/app-probe.ts",
       PROVIDER_IMPORT,
     );
@@ -86,7 +98,7 @@ describe("model provider boundary — enforcement", () => {
   });
 
   it("ALLOWS the same import inside lib/model/", async () => {
-    const result = await lintAs(
+    const result = await lintCodeAs(
       "lib/model/__probe__/adapter-probe.ts",
       PROVIDER_IMPORT,
     );
@@ -96,10 +108,29 @@ describe("model provider boundary — enforcement", () => {
       violations,
       "lib/model/ is the designated adapter boundary and must permit the import",
     ).toEqual([]);
+  });
 
-    await rm(path.join(ROOT, "lib/model/__probe__"), {
-      recursive: true,
-      force: true,
-    });
+  it("REJECTS a dynamic provider import from app/", async () => {
+    const result = await lintCodeAs(
+      "tests/arch/__probe__/dynamic-app-probe.ts",
+      DYNAMIC_PROVIDER_IMPORT,
+    );
+
+    const violations =
+      result?.messages.filter((m) => m.ruleId === DYNAMIC_RULE) ?? [];
+    expect(violations).toHaveLength(1);
+    expect(violations[0]?.severity).toBe(2);
+    expect(violations[0]?.message).toContain("lib/model");
+  });
+
+  it("ALLOWS a dynamic provider import inside lib/model/", async () => {
+    const result = await lintCodeAs(
+      "lib/model/__probe__/dynamic-adapter-probe.ts",
+      DYNAMIC_PROVIDER_IMPORT,
+    );
+
+    const violations =
+      result?.messages.filter((m) => m.ruleId === DYNAMIC_RULE) ?? [];
+    expect(violations).toEqual([]);
   });
 });

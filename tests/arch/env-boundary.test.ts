@@ -1,10 +1,16 @@
-import { readFile, readdir } from "node:fs/promises";
+import { readFile, readdir, rm } from "node:fs/promises";
 import path from "node:path";
 
-import { describe, expect, it } from "vitest";
+import { afterAll, describe, expect, it } from "vitest";
 
 import architecture from "../../architecture.json";
-import { ROOT, isDisabled, isError, resolveRule } from "./eslint-config-helper";
+import {
+  ROOT,
+  isDisabled,
+  isError,
+  lintCodeAs,
+  resolveRule,
+} from "./eslint-config-helper";
 
 /**
  * Proves the secret / environment boundary (Build Plan §14).
@@ -16,6 +22,11 @@ import { ROOT, isDisabled, isError, resolveRule } from "./eslint-config-helper";
  */
 
 const SECRET_NAME = new RegExp(architecture.secretNamePattern, "i");
+const PROBE_DIR = path.join(ROOT, "app/__probe__");
+
+afterAll(async () => {
+  await rm(PROBE_DIR, { recursive: true, force: true });
+});
 
 async function collectSourceFiles(dir: string): Promise<string[]> {
   const skip = new Set([
@@ -125,5 +136,42 @@ describe("environment access boundary", () => {
       isDisabled(entry),
       "lib/env/ is the designated configuration boundary",
     ).toBe(true);
+  });
+
+  it('REJECTS computed process["env"] access outside lib/env/', async () => {
+    const result = await lintCodeAs(
+      "app/__probe__/computed-env-probe.ts",
+      `export const databaseUrl = process["env"].DATABASE_URL;\n`,
+    );
+
+    const violations = result?.messages.filter((m) => m.ruleId === RULE) ?? [];
+    expect(violations).toHaveLength(1);
+    expect(violations[0]?.severity).toBe(2);
+  });
+
+  it("REJECTS destructured process environment access outside lib/env/", async () => {
+    const result = await lintCodeAs(
+      "app/__probe__/destructured-env-probe.ts",
+      `const { env } = process;\nexport const databaseUrl = env.DATABASE_URL;\n`,
+    );
+
+    const violations = result?.messages.filter((m) => m.ruleId === RULE) ?? [];
+    expect(violations).toHaveLength(1);
+    expect(violations[0]?.severity).toBe(2);
+  });
+
+  it("ALLOWS computed environment access inside lib/env/", async () => {
+    const result = await lintCodeAs(
+      "lib/env/__probe__/computed-env-probe.ts",
+      `export const databaseUrl = process["env"].DATABASE_URL;\n`,
+    );
+
+    const violations = result?.messages.filter((m) => m.ruleId === RULE) ?? [];
+    expect(violations).toEqual([]);
+
+    await rm(path.join(ROOT, "lib/env/__probe__"), {
+      recursive: true,
+      force: true,
+    });
   });
 });

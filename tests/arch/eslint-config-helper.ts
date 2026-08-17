@@ -1,3 +1,4 @@
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -35,6 +36,20 @@ export async function resolveRule(
     path.join(ROOT, relativePath),
   )) as ResolvedConfig;
   return config.rules?.[ruleId];
+}
+
+/** Writes a real file for project-service linting, then removes it. */
+export async function lintCodeAs(relativePath: string, code: string) {
+  const absolute = path.join(ROOT, relativePath);
+  await mkdir(path.dirname(absolute), { recursive: true });
+  await writeFile(absolute, code, "utf8");
+  try {
+    const eslint = new ESLint({ cwd: ROOT, ignore: false });
+    const [result] = await eslint.lintFiles([absolute]);
+    return result;
+  } finally {
+    await rm(absolute, { force: true });
+  }
 }
 
 /**

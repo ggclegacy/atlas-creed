@@ -2,8 +2,8 @@
 
 A persistent personal intelligence system.
 
-**Status: Phase 0 (Foundation) complete. Phase 1 not started.** No database, auth,
-AI calls, or product features are implemented yet. See
+**Status: Phase 0 (Foundation) complete. Phase 1 (Skeleton) authorized and in
+progress.** No AI calls or Phase 2 product features are implemented. See
 [`docs/ATLAS_V1_BUILD_PLAN.md`](docs/ATLAS_V1_BUILD_PLAN.md) for the approved
 architecture and phase plan.
 
@@ -13,7 +13,7 @@ architecture and phase plan.
 
 | Requirement | Version     | Notes                                                                       |
 | ----------- | ----------- | --------------------------------------------------------------------------- |
-| Node.js     | **24**      | Pinned in [`.nvmrc`](.nvmrc); CI reads the same file. Verified on v24.19.0. |
+| Node.js     | **24.x**    | Pinned in [`.nvmrc`](.nvmrc); CI reads the same file. Verified on v24.19.0. |
 | pnpm        | **11.18.0** | Pinned by the `packageManager` field. Do not install globally — see below.  |
 
 ### Running pnpm — no PATH changes required
@@ -101,10 +101,14 @@ into the browser bundle and are public permanently. A test enforces this.
 
 ## Documentation
 
-| Document                                                                         | Purpose                                                 |
-| -------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| [`CLAUDE.md`](CLAUDE.md)                                                         | Working conventions and current phase                   |
-| [`docs/canon/ATLAS-CREED-BIBLE.md`](docs/canon/ATLAS-CREED-BIBLE.md)             | Product canon — direction, not scope                    |
-| [`docs/product/V1-PRODUCT-DEFINITION.md`](docs/product/V1-PRODUCT-DEFINITION.md) | What V1 must accomplish                                 |
-| [`docs/ATLAS_V1_BUILD_PLAN.md`](docs/ATLAS_V1_BUILD_PLAN.md)                     | Approved architecture and phases 0–7                    |
-| [`docs/ATLAS_DESIGN_SYSTEM_V1.md`](docs/ATLAS_DESIGN_SYSTEM_V1.md)               | Visual and interaction standard (awaiting ratification) |
+| Document                                                                         | Purpose                                  |
+| -------------------------------------------------------------------------------- | ---------------------------------------- |
+| [`CLAUDE.md`](CLAUDE.md)                                                         | Working conventions and current phase    |
+| [`docs/canon/ATLAS-CREED-BIBLE.md`](docs/canon/ATLAS-CREED-BIBLE.md)             | Product canon — direction, not scope     |
+| [`docs/product/V1-PRODUCT-DEFINITION.md`](docs/product/V1-PRODUCT-DEFINITION.md) | What V1 must accomplish                  |
+| [`docs/ATLAS_V1_BUILD_PLAN.md`](docs/ATLAS_V1_BUILD_PLAN.md)                     | Approved architecture and phases 0–7     |
+| [`docs/ATLAS_DESIGN_SYSTEM_V1.md`](docs/ATLAS_DESIGN_SYSTEM_V1.md)               | Ratified visual and interaction standard |
+
+The Bible and V1 Product Definition paths above are canonical. Historical
+top-level aliases such as `docs/ATLAS_VISION_AND_STANDARDS.md` and
+`docs/ATLAS_V1_PRODUCT_DEFINITION.md` must not be recreated.

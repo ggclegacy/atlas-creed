@@ -4,6 +4,9 @@
 
 [docs/canon/ATLAS-CREED-BIBLE.md](docs/canon/ATLAS-CREED-BIBLE.md) is foundational product canon. Read it before any major architectural, UX, or product decision.
 
+This is the canonical path. Do not create or refer to a duplicate
+`docs/ATLAS_VISION_AND_STANDARDS.md` alias.
+
 Per §33 of that document:
 
 - It describes **direction, not immediate scope**. Do not implement it wholesale because it appears there.
@@ -14,6 +17,9 @@ Per §33 of that document:
 ## V1 scope
 
 [docs/product/V1-PRODUCT-DEFINITION.md](docs/product/V1-PRODUCT-DEFINITION.md) governs what V1 builds. It is phase-scoped — unlike the Bible, it will be superseded rather than extended.
+
+This is the canonical path. Do not create or refer to a duplicate
+`docs/ATLAS_V1_PRODUCT_DEFINITION.md` alias.
 
 The engineering rule from §47 is the gate for every addition: *does this improve Atlas's core loop, or establish infrastructure the loop genuinely needs?* If neither, don't build it. §40 lists what V1 is deliberately not.
 
@@ -33,11 +39,11 @@ Three architecture rules that are easy to violate accidentally:
 
 ## Current phase
 
-**Phase 0 (Foundation) is complete. Phase 1 has not begun.**
+**Phase 0 (Foundation) is complete. Phase 1 (Skeleton) is authorized and in progress.**
 
 Implemented: Next.js app skeleton, strict TypeScript, ESLint + Prettier, Vitest + Playwright, CI, environment validation, architecture boundary enforcement, and the design-token architecture.
 
-Not implemented: database, auth, AI calls, chat, canon, memory, retrieval, projects, files, voice. Do not add any of these without explicit approval for the relevant phase.
+Phase 1 may implement only its approved database, authentication, protected application shell, PWA, and deployment foundation. AI calls, chat, canon, memory, retrieval, projects, files, voice, agents, and tools remain unauthorized.
 
 ## Engineering conventions (Phase 0)
 
@@ -61,7 +67,7 @@ A bare `pnpm ...` will fail with *command not found* unless a shim has been adde
 
 **Environment.** `lib/env/schema.ts` holds pure, testable Zod schemas. `lib/env/server.ts` adds `server-only` so importing it from a Client Component is a build failure. `lib/env/client.ts` reads `NEXT_PUBLIC_*` literals. **No secret may ever carry the `NEXT_PUBLIC_` prefix** — those values are inlined into the browser bundle and are public permanently. A test enforces this against a secret-name pattern.
 
-**Design tokens are two layers.** [`styles/tokens/primitives.css`](styles/tokens/primitives.css) holds raw values and is **provisional** — the visual system is not ratified. [`styles/tokens/semantic.css`](styles/tokens/semantic.css) is the stable layer that names roles (`--surface-card`, `--accent-authority`). **Components use semantic tokens only.** Primitives are deliberately not exposed as Tailwind utilities, so a component cannot reach past the semantic layer. Ratifying the visual system means editing primitives and nothing else.
+**Design tokens are two layers.** [`styles/tokens/primitives.css`](styles/tokens/primitives.css) holds the ratified raw values. [`styles/tokens/semantic.css`](styles/tokens/semantic.css) is the stable layer that names roles (`--surface-card`, `--accent-authority`). **Components use semantic tokens only.** Primitives are deliberately not exposed as Tailwind utilities, so a component cannot reach past the semantic layer. Evidence-based tuning belongs in primitives and must be recorded; components must not drift around the semantic layer.
 
 **Formatter scope.** `docs/`, `CLAUDE.md`, and `tsconfig.json` are Prettier-ignored. The first two are authored documents whose formatting is a human decision; the third is rewritten by Next on every build.
 
@@ -71,7 +77,7 @@ A bare `pnpm ...` will fail with *command not found* unless a shim has been adde
 
 [docs/ATLAS_DESIGN_SYSTEM_V1.md](docs/ATLAS_DESIGN_SYSTEM_V1.md) is the authoritative visual and interaction standard. `docs/design/DESIGN-SYSTEM.md` is a superseded earlier exploration.
 
-Status is **proposed, awaiting owner ratification** — sixteen decisions are listed at the end of that document. **This blocks Phase 1 interface work.**
+Status is **ratified and approved**. All sixteen decisions at the end of that document govern Phase 1 interface work. Minor evidence-based tuning is permitted only when it preserves the approved design language and is recorded.
 
 The thesis in one line: **Atlas is an environment, not an application.** The chrome recedes; thinking is the content. A screen converted to grayscale must still read as Atlas.
 

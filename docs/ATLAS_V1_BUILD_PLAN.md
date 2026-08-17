@@ -1,10 +1,12 @@
 # ATLAS CREED
 ## V1 Build Plan
 
-**Status:** Revision 3 — awaiting final approval
+**Status:** Revision 3 — approved
 **Supersedes:** `docs/architecture/ARCHITECTURE.md` (v0.1 sketch, absorbed here)
 **Governed by:** [canon/ATLAS-CREED-BIBLE.md](canon/ATLAS-CREED-BIBLE.md) · [product/V1-PRODUCT-DEFINITION.md](product/V1-PRODUCT-DEFINITION.md)
-**Nothing in this document has been implemented.** No code, no dependencies, no services, no migrations.
+**Implementation status:** Phase 0 is complete. The Design System is ratified,
+and Phase 1 is authorized and in progress. No Phase 2-or-later product capability
+is authorized or implemented.
 
 **Revision 2 changes:** Core/Extended Canon split with a retrieval interface from
 day one · corrected cost model accounting for cache expiry between sessions ·
@@ -1613,9 +1615,9 @@ private project becomes a surprise bill.
 | 10 | **Retrieval fallback ladder, deterministic, no embeddings** | **Directed (Rev 3) — incorporated** |
 | 11 | Brain interface at P0 | Approved in Rev 1 |
 | 12 | Neon Postgres | Approved in Rev 1 |
-| 13 | **Core Canon token budget — is 25k target / 40k hard limit right?** | **OPEN** |
-| 14 | **Monthly spend cap — the actual dollar figure** | **OPEN — owner input required** |
-| 15 | **Design-system ratification: typeface, dark-only, gold ratio, whether purple ships** | **OPEN — blocks Phase 1 UI** |
+| 13 | **Core Canon token budget — is 25k target / 40k hard limit right?** | **Provisionally approved — reassess against the real Phase 3 corpus** |
+| 14 | **Monthly spend cap — the actual dollar figure** | **Deferred until operationally relevant; configuration must remain open** |
+| 15 | **Design-system ratification: typeface, dark-only, gold ratio, whether purple ships** | **Approved — all 16 Design System V1 decisions ratified** |
 
 ### Can decide during build
 
@@ -1681,4 +1683,4 @@ infrastructure the loop genuinely needs?*
 
 ---
 
-**End of Revision 2. Awaiting approval — no implementation has begun.**
+**End of Revision 3. Approved — Phase 0 complete; Phase 1 authorized and in progress.**

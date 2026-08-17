@@ -22,7 +22,7 @@ export default function Page() {
       <p className="max-w-[var(--measure-prose)] text-text-secondary">
         The engineering foundation is in place. Strict TypeScript, enforced
         architecture boundaries, validated configuration, and a two-layer token
-        system awaiting visual ratification.
+        system implementing the ratified Atlas design language.
       </p>
 
       <p className="max-w-[var(--measure-prose)] text-text-tertiary text-[length:var(--text-size-compact)]">
